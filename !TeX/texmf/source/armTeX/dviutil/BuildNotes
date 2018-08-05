@@ -1,0 +1,9 @@
+tangle @.dvitype.web @.dvitype.ch
+^.lib.convert dvitype c.dvitype
+gcc -mthrowback -Ilib: -c c.dvitype
+gcc -o bin.dvitype o.dvitype ^.lib.library OSLib:o.OSLib
+
+tangle @.dvicopy.web @.dvicopy.ch
+^.lib.convert dvicopy c.dvicopy
+gcc -mthrowback -Ilib: -c c.dvicopy
+gcc -o bin.dvicopy o.dvicopy ^.lib.library OSLib:o.OSLib

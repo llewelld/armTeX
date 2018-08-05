@@ -1,0 +1,58 @@
+/**
+ * WhichSlot --- Determine wimpslot required for an AIF to start
+ *
+ * say WhichSlot <AIF file>
+ **/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* The AIF header is like this */
+typedef struct {
+  /* BL decompress or BLNV 0000 if unsqueezed */
+  unsigned        blnv_decompress;
+  /* BL relocate, BL zeroinit, BL entry, SWI OS_Exit */
+  unsigned        initial_code[4];
+  unsigned        size_readonly;/* Size of RO areas */
+  unsigned        size_readwrite;	/* Size of RW areas */
+  unsigned        size_debug;	/* Size of debugging info */
+  unsigned        size_zeroinit;/* Size of ZI areas */
+  /* more follows, but we don't care */
+}               AIF_header;
+
+int
+main(int argc, char *argv[])
+{
+  FILE           *file;
+  AIF_header      header;
+
+  if (argc != 2) {
+    fputs("Usage: WhichSlot <AIF file>\n", stderr);
+    exit(EXIT_FAILURE);
+  }
+  file = fopen(argv[1], "rb");
+  if (file == NULL) {
+    fprintf(stderr, "WhichSlot: cannot read \'%s\'\n", argv[1]);
+    exit(EXIT_FAILURE);
+  }
+  if (1 != fread(&header, sizeof(header), 1, file)) {
+    fprintf(stderr, "WhichSlot: cannot read from \'%s\'\n", argv[1]);
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+  fclose(file);
+
+  if (header.blnv_decompress & 0xf0000000 != 0xfb000000
+      && header.blnv_decompress != 0xe1a00000) {
+    printf("Image is compressed, data may be wrong\n");
+  }
+  printf("Readonly :%6uK\n", header.size_readonly / 1024);
+  printf("Readwrite:%6uK\n", header.size_readwrite / 1024);
+  printf("Zero-init:%6uK\n", header.size_zeroinit / 1024);
+  printf("Debug    :%6uK\n", header.size_debug / 1024);
+  printf("WimpSlot :%6uK\n", (header.size_readonly
+                              + header.size_readwrite
+                              + header.size_zeroinit
+                              + 4096 + 1023) / 1024);
+  exit(EXIT_SUCCESS);
+}

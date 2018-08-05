@@ -1,0 +1,52 @@
+/* Paths.  */
+
+/* The meanings of these paths are described in the man pages.  This file is
+   created from the defaults in Makefile.in.  */
+
+#ifndef BIBINPUTS
+#define BIBINPUTS "replace-with-bibinputs-path"
+#endif
+
+#ifndef BSTINPUTS
+#define BSTINPUTS "replace-with-bstinputs-path"
+#endif
+
+#ifndef MFBASES
+#define MFBASES "replace-with-mfbases-path"
+#endif
+
+#ifndef MFINPUTS
+#define MFINPUTS "replace-with-mfinputs-path"
+#endif
+
+#ifndef MFPOOL
+#define MFPOOL "replace-with-mfpool-path"
+#endif
+
+#ifndef TEXFONTS
+#define TEXFONTS "replace-with-texfonts-path"
+#endif
+
+#ifndef TEXFORMATS
+#define TEXFORMATS "replace-with-texformats-path"
+#endif
+
+#ifndef TEXINPUTS
+#define TEXINPUTS "replace-with-texinputs-path"
+#endif
+
+#ifndef TEXPOOL
+#define TEXPOOL "replace-with-texpool-path"
+#endif
+
+#ifndef GFFONTS
+#define GFFONTS "replace-with-gffonts-path"
+#endif
+
+#ifndef PKFONTS
+#define PKFONTS "replace-with-pkfonts-path"
+#endif
+
+#ifndef VFFONTS
+#define VFFONTS "replace-with-vffonts-path"
+#endif

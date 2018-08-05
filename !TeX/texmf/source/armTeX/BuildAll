@@ -1,0 +1,23 @@
+| Build all programs in here
+Obey <Obey$Dir>.SetPath
+dir texsrc:lib
+amu
+dir texsrc:extras
+amu install
+dir texsrc:web2c
+amu install
+| We need a working tangle from here on I suppose
+dir texsrc:web
+amu install
+dir texsrc:tex
+amu install
+dir texsrc:tex.smalltex
+amu install
+dir texsrc:mf
+amu install
+dir texsrc:mf.smallmf
+amu install
+dir texsrc:dviutil
+amu install
+dir texsrc:fontutil
+amu install

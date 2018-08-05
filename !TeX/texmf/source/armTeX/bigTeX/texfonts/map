@@ -1,0 +1,42 @@
+% original texfonts.map -- define aliases for fontnames.
+% 
+% (If you change or delete `original' on the previous line, web2c won't
+% install its texfonts.map over this file.)
+% 
+% First column is real filename; second is alias; others are ignored.
+% Spaces and/or tabs separate columns.
+% Blank lines are ignored.
+% Comments (obviously) start with %.
+% 
+% Null bytes will confuse the programs, and a CR at the end of a line is
+% removed for DOS's sake, but any other characters will be considered
+% part of the text, and any length is ok.
+% 
+% If an alias here has an extension, it will match only those files with
+% that extension; otherwise, it will match anything with the same root,
+% regardless of extension.  For example, `foo.tfm' matches only
+% `foo.tfm'; but `foo' matches `foo.tfm', `foo.vf', `foo.300pk',
+% whatever.
+% 
+% Any existing file will be used in preference to a file that exists via
+% an alias.  For example, suppose you have a file `foo.tfm' and this
+% file defines `foo' as an alias for `bar'.  `foo.tfm' will be used, not
+% `bar.tfm'.
+
+% These fonts have been named both `circle10' and `lcircle10'.  But
+% `lcirc10' would be better, anyway, as it's short enough for DOS.
+% Allow any of these variations to mean any of the others.
+% --karl@cs.umb.edu, 23 Jan 93.
+circle10        lcircle10
+circle10        lcirc10
+lcircle10       circle10
+lcircle10       lcirc10
+lcirc10         circle10
+lcirc10         lcircle10
+
+circlew10       lcirclew10
+circlew10       lcircw10
+lcirclew10      circlew10
+lcirclew10      lcircw10
+lcircw10        circlew10
+lcircw10        lcirclew10

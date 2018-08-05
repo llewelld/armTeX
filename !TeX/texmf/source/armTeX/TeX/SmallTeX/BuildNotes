@@ -1,0 +1,10 @@
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -DINITEX -DINI -c c.iextra
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -DINITEX -c c.initex
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -c c.itex
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -c c.vextra
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -c c.openinout
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -c c.tex0
+gcc -mthrowback -DSMALLTeX -DTeX -Ilib: -c c.tex1
+gcc -o initex o.iextra o.initex o.openinout o.tex0 o.tex1 ^.^.lib.library OSLib:o.OSLib
+gcc -o virtex o.vextra o.itex o.openinout o.tex0 o.tex1 ^.^.lib.library OSLib:o.OSLib
+

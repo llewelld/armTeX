@@ -1,0 +1,3 @@
+gcc -mthrowback -W -include ^.lib.h.common -include ^.lib.h.texmfmem -Ilib: -c tangle.c
+
+gcc tangle.o lib:library Unix:UnixLib.o OSLibSupport:OSLibSupport32.o OSLib:OSLib32.o -o tangle2

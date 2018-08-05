@@ -1,0 +1,12 @@
+| Check in all source files
+Dir <Obey$Dir>
+Wimpslot 1500k
+Gawk -f AWK:RCSsource CheckIn
+Obey
+| Script follows
+name stoklund
+release 1
+state Exp
+exclude ^old-.* ChangeLog getopt
+exclude common_def texmf_def
+| end...

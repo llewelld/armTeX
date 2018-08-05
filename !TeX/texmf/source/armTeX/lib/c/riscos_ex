@@ -1,0 +1,322 @@
+/*
+ * riscos_ex.c: RISC OS extras
+ *
+ * Copyright (C) 1992 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * This file contains functions that are lacking in Acorn ANSI C v4 or
+ * that are too RISC OS-specific to be simply changed in the relevant
+ * .c or .h files
+ *
+ * All functions are prefixed by `riscos_' to avoid function name
+ * clashes
+ *
+ * The author is Mark J. Sinke, reachable at marks@stack.urc.tue.nl or
+ * Mark J. Sinke Mendelssohnstraat 5 5144 GD WAALWIJK The Netherlands
+ *
+ * Much code is rewritten by Jakob Stoklund Olesen <stoklund@mi.aau.dk>
+ */
+
+#define RISCOS_EX_C_FILE
+
+#include "config.h"
+
+#include "oslib/osfscontrol.h"
+#include "oslib/osfile.h"
+
+
+/*
+ * This variable holds our impression of the CSD as set by
+ * riscossetname.
+ */
+char *current_prefix = "";
+int current_prefix_length = 0;
+
+/*
+ * TeX and Metafont have two ways of creating output files with
+ * extensions: dot-mode: file is put in a directory. slash-mode:
+ * extension separator is '/'. The mode is determined by the filename
+ * conventions used by the input file.
+ */
+enum riscosoutputmode_enum riscosoutputmode = outputmode_unset;
+
+/*
+ * This is the file type that is given to the next file opened for
+ * output.
+ */
+int riscostype = 0xfff;		/* Default to `text' output */
+
+
+/*--------------------------------------------------------------------------
+   riscos_absolute(filename): return true if file name is absolute
+   or explicitly relative
+--------------------------------------------------------------------------*/
+/* I think the following is sufficient; should look up PRMs */
+boolean
+riscos_absolute (char *filename)
+{
+  return (filename[0] == '-' || strpbrk (filename, ":$&\\@^") != NULL);
+}
+
+/*--------------------------------------------------------------------
+   riscossetname(name): set `current prefix' to current dir
+
+   If pathname is absolute (or explicitly relative) it is used to
+   find the root dir.
+   If it is relative, the current CSD is used.
+   The path is canonicalised to avoid later dependency on CSD settings.
+   The filename given must have an extension.
+--------------------------------------------------------------------*/
+void
+riscossetname (char *name)
+{
+  char *pos;
+  char *work;
+  char *pathend;
+  int size;
+
+  null_terminate (name + 1);
+  work = name + 1;
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "riscos_setname(\"%s\")\n", work);
+#endif
+
+  /* simple relative path: use CSD as prefix */
+  if (!riscos_absolute (work))
+    {
+      if (NULL == xosfscontrol_canonicalise_path ("@",
+						NULL, NULL, NULL, 0, &size))
+	{
+	  current_prefix = xmalloc (2 - size);
+	  current_prefix_length = 1 - size;
+	  /* Got the size, now get the path */
+	  if (NULL == xosfscontrol_canonicalise_path ("@",
+						      current_prefix, NULL,
+						      NULL, 1 - size, &size)
+	      && size == 1)
+	    {
+	      current_prefix[current_prefix_length - 1] = '.';
+	      current_prefix[current_prefix_length] = '\0';
+#ifdef RISCOS_DEBUG
+	      fprintf (stderr, "  --> set to \"%s\" (from CSD)\n",
+		       current_prefix);
+#endif
+	      return;		/* ok, got the path */
+	    }
+	  free (current_prefix);
+	}
+      /* getting here means some error occured */
+      current_prefix = "";
+      current_prefix_length = 0;
+      return;
+    }
+
+  /* It's an absolute path */
+  current_prefix = NULL;
+  /* Find the size of the canonicalised path */
+  if (NULL == xosfscontrol_canonicalise_path (work, NULL,
+					      NULL, NULL, 0, &size))
+    {
+      current_prefix = xmalloc (1 - size);
+      /* Got the size, now get the path */
+      if (NULL != xosfscontrol_canonicalise_path (work, current_prefix,
+						NULL, NULL, 1 - size, &size)
+	  || size != 1)
+	{
+	  /* Something went wrong */
+	  free (current_prefix);
+	  current_prefix = NULL;
+	}
+    }
+  /* If somehow OS_FSControl didn't work, we use the given name */
+  if (current_prefix == NULL)
+    current_prefix = xstrdup (work);
+
+  /* Now strip off the filename to get the path */
+  pos = find_suffix (current_prefix);
+  if (pos)
+    *--pos = '\0';		/* there goes the extension */
+  else
+    pos = current_prefix + strlen (current_prefix);
+  /* Find the last '.' or ':' */
+  while (pos > current_prefix && pos[-1] != '.' && pos[-1] != ':')
+    pos--;
+  *pos = '\0';
+  current_prefix_length = pos - current_prefix;
+  /* If there's nothing left (unlikely) we use "" */
+  if (current_prefix_length == 0)
+    {
+      free (current_prefix);
+      current_prefix = "";
+    }
+
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "  --> set to \"%s\" (from \"%s\")\n",
+	   current_prefix, work);
+#endif
+  space_terminate (name + 1);
+}
+
+/*--------------------------------------------------------------------
+   riscos_isdir(filename): return true if filename is a directory
+--------------------------------------------------------------------*/
+
+/*
+ * OS_File 5: Read catalogue information for a named object (Using
+ * File$Path) Return 0 if not found, 1 if file, 2 if directory, 3 if
+ * image file
+ */
+
+boolean
+riscos_isdir (char *filename)
+{
+  int length = strlen (filename);
+  char end = filename[length - 1];
+  int obj_type;
+
+  if (end == '.')
+    filename[length - 1] = '\0';
+
+  if (NULL != xosfile_read_stamped (filename, &obj_type,
+				    NULL, NULL, NULL, NULL, NULL))
+    obj_type = 0;
+
+  filename[length - 1] = end;
+  return obj_type == 2 || obj_type == 3;	/* accept images as well */
+}
+
+/*--------------------------------------------------------------------
+ riscos_translate(filename, create)
+ All the filename translation for RISC OS is handled by this function.
+ The current prefix is prepended to the path is necessary and the
+ extension delimiter is swapped between '.' and '/'. If create is true,
+ an empty file of type riscostype is created and possibly the necessary
+ directory. The string returned is malloc'ed and should be freed.
+ If no readable file could be found, or no file written NULL is returned.
+--------------------------------------------------------------------*/
+
+char *
+riscos_translate (char *filename, boolean create)
+{
+  char *newname = NULL;		/* the string to return */
+  char *sufpos;			/* where is the suffix? */
+  int good;
+
+  /* first we add the current prefix */
+  if (current_prefix_length > 0)
+    {
+      if (filename[0] == '@')
+	newname = concat (current_prefix, filename + 2);
+      else if (filename[0] == '^' || !riscos_absolute (filename))
+	newname = concat (current_prefix, filename);
+    }
+  if (!newname)
+    newname = xstrdup (filename);
+
+  sufpos = find_suffix (newname);
+
+  if (create)
+    {
+      /* Try to create the given filename w/o checking output mode */
+      good = xosfile_create_stamped (newname, riscostype, 0) == NULL;
+      /* didn't work, the rest depends on output mode */
+      if (!good && sufpos)
+	{
+	  switch (riscosoutputmode)
+	    {
+	    case outputmode_slash:	/* try with a '/' extension */
+	      sufpos[-1] = '/';
+	      break;
+	    case outputmode_dot:	/* try to create the output dir */
+	    default:		/* this is also the default mode */
+	      sufpos[-1] = '\0';	/* this is the dir name */
+	      /* make to output directory. TeX directories have very
+	         few entries, so ask for 8 in case some filesystem
+	         takes notice. */
+	      xosfile_create_dir (newname, 8);
+	      sufpos[-1] = '.';	/* restore filename */
+	      break;
+	    }
+	  /* Try again to make the file.
+	     If it fails, the caller will have to notice */
+	  good = xosfile_create_stamped (newname, riscostype, 0) == NULL;
+	}
+#ifdef RISCOS_DEBUG
+      fprintf (stderr, "Writing \"%s\", type %3x\n", newname, riscostype);
+#endif
+      if (good)
+	riscostype = 0xfff;
+    }
+  else
+    /* not create */
+    {
+      /* First see if given filename exist */
+      good = riscos_readaccess (newname);
+      /* else try the opposite suffix delimiter */
+      if (!good && sufpos)
+	{
+	  sufpos[-1] = sufpos[-1] == '.' ? '/' : '.';
+	  good = riscos_readaccess (newname);
+	}
+      /* If this works, we set the output mode accordingly */
+      if (good && riscosoutputmode == outputmode_setnextread)
+	{
+	  riscosoutputmode = sufpos[-1] == '.'
+	    ? outputmode_dot : outputmode_slash;
+#ifdef RISCOS_DEBUG
+	  fprintf (stderr, "Output mode set from \"%s\"\n", sufpos - 1);
+#endif
+	}
+    }
+
+  if (good)
+    return newname;
+  else
+    {
+      free (newname);
+      return NULL;
+    }
+}
+
+
+/*--------------------------------------------------------------------
+  riscos_fopen(filename, mode): open a file for output, possibly
+  creating a directory and dealing with '@' This function replaces
+  all fopen()'s in TeX and friends! Note that it does not handle "a"
+  mode well w.r.t filetypes. I don't think that it is used.
+--------------------------------------------------------------------*/
+
+FILE *
+riscos_fopen (char *filename, char *mode)
+{
+  FILE *f;
+  char *newname;
+
+  newname = riscos_translate (filename, mode[0] == 'w');
+  if (newname != NULL)
+    {
+      f = fopen (newname, mode);
+      free (newname);
+      return f;
+    }
+  else
+    {
+      /* some programs need to open null: which fails above */
+      if (0 == strncmp (filename, "null:", 5))
+	return fopen ("null:", mode);
+      return NULL;
+    }
+}

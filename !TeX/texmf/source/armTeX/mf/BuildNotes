@@ -1,0 +1,12 @@
+convert ^.lib       Needs manually running, because sed needs Aemulor
+
+gcc -Ilib: -DINIMF -DINI -mthrowback -c c.iextra
+gcc -Ilib: -DINIMF -mthrowback -c c.inimf
+gcc -Ilib: -mthrowback -c c.imf
+gcc -Ilib: -mthrowback -c c.vextra
+gcc -Ilib: -mthrowback -c c.openinout
+gcc -Ilib: -mthrowback -c c.mf0
+gcc -Ilib: -mthrowback -c c.mf1
+gcc -Ilib: -mthrowback -c c.mf2
+gcc -o biginimf o.iextra o.inimf o.openinout o.mf0 o.mf1 o.mf2 ^.lib.library OSLib:o.OSLib
+gcc -o bigvirmf o.vextra o.imf o.openinout o.mf0 o.mf1 o.mf2 ^.lib.library OSLib:o.OSLib

@@ -1,0 +1,63 @@
+Version 5.851d
+
+Here is a summary of the most important changes in this version.
+
+* A file `texfonts.map' allows arbitrary mapping of font names (as given
+  to, for instance, \font) to filenames.
+
+* Metafont & TeX:
+  - If a .tex, .tfm, or .mf file can't be found, MakeTeX{TeX,TFM,MF} is
+    invoked before giving up, as in dvips' MakeTeXPK.
+  - Sharable format/base files load faster on LittleEndian machines.
+  - TEXMFOUTPUT is only used for those files which can't be written in
+    the current directory, instead of all files after the first such.
+    Its usage is also reflected in the `... written on ...' messages at
+    the end of the run.
+  - If the DISPLAY environment variable is set, Metafont assumes you are
+    running under X11 for the purposes of online output (instead of
+    relying on the TERM or MFTERM envvar).
+  - Checks for write errors on DVI/GF output.
+  - Unusual glue values no longer make TeX dump core on some systems.
+
+* BibTeX:
+  - The cross-reference feature works as documented (I had foolishly
+    changed the default value of min_crossrefs to eliminate it).
+  - New option -min-crossrefs=<number> to change it dynamically.
+  - New option -verbose; without it, normal reportage is eliminated.
+  - Maximum number of .bib files increased to 100.
+  - Non-printable-ASCII characters in .bib files are preserved.
+
+* TeXware:
+  - tftopl adds a default extension `.tfm' to the input file if necessary.
+
+* web2c: 
+  - Unsigned types are used where possible to represent Pascal
+    subranges.  Among other things, this eliminates a system dependency
+    in creating format/base files (small_number was defined as `schar',
+    which varies between systems).
+
+* configuration:
+  - Unpacks into web2c-<version> instead of src-<version>.*.
+  - site.h merged into lib/c-auto.h.in and ./Makefile.in.
+  - sed is used instead of patch to make the ``small'' change files.
+  - sed is used instead of ed to make the trip/trap files.
+  - The configure script looks in more directories for the X libraries
+    and include files, and is generated from the latest version of Autoconf.
+  - mfware and texware directories merged into the others.
+  - The web2c version is defined in one place, so system information can
+    be added to the banners more easily.
+
+* Makefiles:
+  - Makefiles in subdirectories are created by configure.
+  - $(srcdir) (i.e., compiling in a different directory) is closer to working.
+  - Stamp files are not used at the top level, or for {tex,mf}/convert.
+  - New targets install-data and install-exec, to only install
+    architecture-(in)dependent files.
+
+* PROBLEMS.W2C has some notes on compiling and using these programs
+  under DOS, contributed by melvin@math.psu.edu.
+
+* The man pages have been significantly updated and improved by
+  beebe@math.utah.edu.
+
+* The original web files haven't changed.

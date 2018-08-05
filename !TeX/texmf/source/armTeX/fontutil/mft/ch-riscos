@@ -1,0 +1,64 @@
+These are the changes to mft for RISC OS
+They should be applied *after* the web2c change file
+
+@x
+rewrite (tex_file,tex_file_name);
+@y
+riscos_type:=riscos_textype;
+rewrite (tex_file,tex_file_name);
+@z
+
+The compiler chokes on the huge main function, so we split it up
+
+@x
+@p begin initialize; {beginning of the main program}
+print (banner); {print a ``banner line''}
+print_ln (version_string);
+@<Store all the primitives@>;
+@<Store all the translations@>;
+@y
+@p
+procedure dummy_main_1;
+begin
+@<Store all the primitives@>;
+end;
+
+procedure dummy_main_2;
+begin
+@<Store all the translations@>;
+end;
+
+begin initialize; {beginning of the main program}
+print(banner); {print a ``banner line''}
+print_ln (version_string);
+dummy_main_1;
+dummy_main_2;
+@z
+
+RISC OS uses null:, not /dev/null
+
+@x
+@<Set up null change file@>=
+begin
+        change_file_name[1]:='/';
+        change_file_name[2]:='d';
+        change_file_name[3]:='e';
+        change_file_name[4]:='v';
+        change_file_name[5]:='/';
+        change_file_name[6]:='n';
+        change_file_name[7]:='u';
+        change_file_name[8]:='l';
+        change_file_name[9]:='l';
+        change_file_name[10]:=' ';
+end
+@y
+@<Set up null change file@>=
+begin
+        change_file_name[1]:='n';
+        change_file_name[2]:='u';
+        change_file_name[3]:='l';
+        change_file_name[4]:='l';
+        change_file_name[5]:=':';
+        change_file_name[6]:=' ';
+end
+@z

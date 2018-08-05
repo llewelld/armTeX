@@ -1,0 +1,43 @@
+/*
+ * fcat.c --- concatenate files to stdout
+ */
+
+/*
+ * Synopsis fcat infile1 infile2 ...
+ */
+
+#include <stdio.h>
+
+#define BSIZE 0x10000
+
+void
+typefile(char *name)
+{
+  static char     buffer[BSIZE];
+  int             bytes;
+  FILE           *file;
+
+  file = fopen(name, "r");
+  if (!file) {
+    fprintf(stderr, "fcat: cannot open inputfile '%s'\n", name);
+    return;
+  }
+  while (!feof(file)) {
+    bytes = fread(buffer, 1, BSIZE, file);
+    fwrite(buffer, 1, bytes, stdout);
+  }
+  fclose(file);
+}
+
+int
+main(int argc, char *argv[])
+{
+  int             arg;
+
+  if (argc <= 1) {
+    fprintf(stderr, "Usage : %s file1 file2 ...\n", argv[0]);
+    return 1;
+  }
+  for (arg = 1; arg < argc; arg++)
+    typefile(argv[arg]);
+}

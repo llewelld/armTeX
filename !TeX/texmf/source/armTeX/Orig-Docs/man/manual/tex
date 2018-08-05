@@ -1,0 +1,2059 @@
+% -*-TeX-*-
+% Converted automatically from troff to LaTeX
+% by tr2latex ($Revision: 2.2 $$Date: 1992/04/27 15:13:26 $ by C. Engel)
+% on Sat May 15 10:34:02 1993
+% tr2latex was written by Kamal Al-Yahya at Stanford University
+% (Kamal%Hanauma@SU-SCORE.ARPA)
+% and substantially enhanced by Christian Engel at RWTH Aachen
+% (krischan@informatik.rwth-aachen.de).
+%
+% troff input files: amslatex amstex bibtex dvitype etex gftodvi gftopk gftype
+% initex lamstex latex mf mft patgen pktogf pktype pltotf pooltype slitex tangle
+% tex tftopl vftovp virtex vptovf weave
+%
+% Hacked extensively by Mark J. Sinke (marks@stack.urc.tue.nl)
+% (... moved to plain \TeX, etc.)
+
+\input texnames.sty
+
+\def\AmSLaTeX{$\cal A$\kern-.1667em\lower.5ex\hbox{$\cal M$}%
+            \kern-.125em$\cal S$-\LaTeX}%
+\nopagenumbers
+\hsize=6in
+\hoffset=0.25in
+\parskip=4pt
+\parindent=0pt
+\def\narrower{\advance\leftskip by .5in }
+
+\def\frac#1/#2{\leavevmode\kern.1em
+  \raise.5ex\hbox{\the\scriptfont0 #1}\kern-.1em
+  /\kern-.15em\lower.25ex\hbox{\the\scriptfont0 #2}}
+
+% To avoid lots of warnings
+\hbadness=10000
+%\hfuzz=25pt
+
+% Make \, work in text mode
+\def\,{\ifmmode\mskip\thinmuskip\else\thinspace\fi}
+
+% Small block
+\def\smallblock{\vrule width 3pt height 4pt depth -1pt\relax}
+
+% Item that works with \parindent=0pt
+\def\myitem{\ifvmode\leavevmode\else\hfil\break\fi
+  \hangindent=7pt\hangafter=1
+  \hbox to 7pt{\smallblock\hfil}}
+
+% Things you type
+\def\youtype#1\par{\par\vskip4pt{\tt\narrower
+  \halign to \hsize{##\hfil\cr #1\crcr}\par}}
+
+% A shortcut
+\def\nwl{\hfil\break}
+
+% New program
+\def\phead#1#2#3#4#5{\vfill\eject
+  \headline={\kern-.25in\bf #1\rm(#2)\hfil #3\hfil\folio}}
+
+% Subheading
+\def\shead#1{\bigbreak
+  \leftline{\kern-.25in\bf #1\hfil}\medskip\nobreak}
+
+% Control sequences
+\def\bs{{\tt\char'134}}
+
+% Default paths
+\def\TeXInputsDefault{{\sl\$}.TeX.TeXInputs..}
+\def\BibInputsDefault{{\sl\$}.TeX.BibInputs.}
+\def\BstInputsDefault{{\sl\$}.TeX.BstInputs.}
+\def\MFBasesDefault{{\sl\$}.TeX.Formats.}
+\def\MFInputsDefault{,{\sl\$}.TeX.MFInputs..}
+\def\MFPoolDefault{{\sl\$}.TeX.Formats.}
+\def\TeXFontsDefault{,{\sl\$}.TeX.Fonts..}
+\def\TeXFormatsDefault{{\sl\$}.TeX.Formats.}
+\def\TeXInputsDefault{{\sl\$}.TeX.TeXInputs..}
+\def\TeXPoolDefault{{\sl\$}.TeX.Formats.}
+\def\GFFontsDefault{,{\sl\$}.TeX.Fonts..}
+\def\PKFontsDefault{,{\sl\$}.TeX.Fonts..}
+\def\VFFontsDefault{,{\sl\$}.TeX.Fonts..}
+
+%-------------------------------------------------
+% title page
+%
+\font\largesc=cmcsc10 scaled\magstep5
+\font\largebf=cmbx10 scaled\magstep5
+\centerline{\largebf arm\TeX\ 3.141}
+\bigskip
+\centerline{\largesc Reference manual}
+\bigskip
+\centerline{Compiled and edited by Mark J.~Sinke}
+\vfill
+\eject
+\count0=-1
+\phead{INTRODUCTION}{1}{16 May 1993}{}{}
+
+\shead{ABOUT THE SOFTWARE}
+
+The software described in this reference manual is a full port of \TeX~3.141
+and its friends. The \TeX{} programs ({\bf initex}(1), {\bf virtex}(1), {\bf
+bigvirtex}(1) and {\bf bigvirtex}(1)) are ``correct'' in the sense that
+they've passed the {\it trip} test. They are 99\% compatible with their UNIX
+counterparts, the only differences being the following:
+
+\myitem As FileCore (and so almost all RISC OS filing systems) does not
+support extensions, they are simulated using directories. This keeps the
+files corresponding to a document in the same directory, which is especially
+useful for \LaTeX. If a document with an extension is written and the
+corresponding directory doesn't exist, it is created, if possible. But this
+approach has a disadvantage: if a simple \bs input file must be read, this
+costs a full directory table of disc space. The solution is partly built
+into the UNIX \TeX{} change file: a file wihout extension is tried both
+wtiout and with ``.tex'' appended. For another huge category of files
+support is built into the arm\TeX{} programs: files with a ``.sty''
+extension are tried both with and without the extension.
+
+\myitem The UNIX version uses a directory search algorithm to allow
+subdirectories in a path to be search to any level. But as we cannot see if
+a directory is a pseudo-file or a ``real'' directory, the arm\TeX{} programs
+do a one-level search only.
+
+\myitem The UNIX system of links appears not to be working with the current
+possibilities for file linking. Support is however built in, so if there's a
+way to create links to the programs in the future, the link to the program 
+reads by default the format file with the same name, e.g., the program
+``latex''  reads ``latex.fmt''. As for now, there's a system of aliases that
+works just as well.
+
+\myitem There are two versions of arm\TeX{} available. First of all there
+are {\bf bigvirtex}(1) and {\bf biginitex}(1). These are fully compatible
+with their UNIX counterparts, but they eat up about 3600\,kB of memory, so
+they can be run only from a virtual task window. As a swap file of about
+4\,MB will be created, their startup time is long, and the running time
+depends heavily on the harddisc speed. There are also cut-down versions,
+that have almost the same memory sizes as their UNIX small counterparts, but
+some areas have been cut down by quite an amount. Don't despair, however, as
+I've only needed a big \TeX{} about twice in the four years I've used \TeX.
+
+\shead{ABOUT THE DESKTOP}
+
+As \TeX{} is command-line oriented, I have not made hard attempts to use the
+desktop, but there are a few facilities:
+
+\myitem A number of filetypes are defined. They are hard-wired into the
+code, so they can be changed only by recompiling. As they have been chosen
+at random in the ``user file type area'', a file type clash may occur. The
+file type currently recognised are ``TeX'', ``LaTeX'', ``METAFONT'',
+``GF~Font'', ``PK~Font'' and ``TFM''. The default run actions (e.g. on a
+double click) are resp.\ run {\it virtex \&plain}, run {\it virtex \&lplain},
+run {\it mf \&plain}, run {\it gftopk}, run {\it pktogf} and run {\it
+tftopl}. Their load actions are undefined for ``TeX'', ``LaTeX'' and
+``METAFONT'', so shift-double clicking will result in loading them into the
+active editor. The load action for ``GF~Font'' is to run {\bf gftofnt}, a
+program not (yet) described in this manual, that (tries to) convert a GF
+file into a RISC OS compatible bitmap file. This program might become
+obsolete if {\bf mf2ps} works ok (then we run {\bf mf2ps} to create a
+PostScript font and then {\bf !T1Font} to create an outline font, which is
+much smaller than any bitmap created by {\bf gftofnt}.
+
+\myitem The concept of a ``current directory'' is built into any
+command-line program, and \TeX{} is no exception. The workaround here is
+that the if first file loaded in has an absolute path, like in {\it
+SCSI::Disc4.{\sl\$}.TeX.mydoc.tex}, then the path to this file, {\it
+SCSI::Disc4.{\sl\$}.TeX}, is used as the ``current directory''. This way,
+\TeX{} is independent of the current directory. See {\bf tex}(1) for more
+details.
+
+\myitem \TeX{} and friends are run in a task window. For the big versions of
+the programs, you need a ``virtual task window'', i.e., a task window having
+a virtual memory manager. {\bf !Virtual}, supplied with the distribution
+does this job.
+
+\shead{ABOUT THIS MANUAL}
+
+The rest of this manual consists of converted UNIX manual pages for each of
+the programs.
+
+\shead{ABOUT THE AUTHOR}
+
+I am Mark Sinke, a student of the Eindhoven University of Technology. I can
+be reached at {\tt marks@stack.urc.tue.nl} or by writing to:
+
+{\parskip=0pt\parindent=5pt\obeylines
+  Mark J.~Sinke
+  Mendelssohnstraat~5
+  5144~GD WAALWIJK
+  The~Netherlands}
+
+Please send me bug reports, comments, etc.
+
+P.S. The word author refers to this introduction and some change files.
+
+%--------------------------------------------------
+% start of input file: amslatex
+%
+\phead{AMSLATEX}{1}{27 December 1992}{}{}
+\count0=1
+\shead{NAME}
+
+amslatex -- structured text formatting and typesetting
+
+\shead{SYNOPSIS}
+
+{\bf latex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+\AmSLaTeX{} is an extension of \LaTeX{} (see {\it \LaTeX{} -- A Document
+Preparation System}) that provides the powerful mathematical typesetting
+macros of \AmSTeX{} (see {\it The Joy of \TeX}) within the syntax of \LaTeX. 
+It should be contrasted with \LAmSTeX{} ({\bf lamstex}(1)),
+which extends \AmSTeX{} with \LaTeX{}-like features.
+
+\AmSLaTeX{} documents can be processed by {\bf latex}(1), so a separate
+executable program named {\bf amslatex} is not usually provided.
+
+\AmSLaTeX{} is a \TeX{} macro package, not a modification to the \TeX{}
+source program, so all the capabilities described in {\bf tex}(1) are
+present.
+
+The \AmSLaTeX{} macros encourage writers to think about the content of their
+documents, rather than the form.  The ideal, not always realized, is to have
+no formatting commands (like ``switch to italic'' or ``skip 2~picas'') in
+the document at all; instead, everything is done by specific markup
+instructions: ``emphasize'', ``start a section''.
+
+\AmSTeX{} is the official typesetting system of the American Mathematical
+Society, and nearly all of its publications are typeset using \AmSTeX.  The
+online version of AMS Math Reviews uses \AmSTeX{} input syntax for display
+of mathematical material.  AMS authors can provide editors with
+computer-readable \AmSTeX{} or \AmSLaTeX{} files.
+
+\shead{FILES}
+
+{\it TeXInputs:amslatex.tex}\quad Sample \LaTeX{} document illustrating the {\it
+amsbook} document style.
+
+\shead{SEE ALSO}
+
+{\bf amstex}(1), {\bf lamstex}(1), {\bf latex}(1), {\bf tex}(1), {\bf slitex}(1).
+\nwl
+Leslie Lamport, {\it \LaTeX{} --- A Document Preparation System},
+Addison-Wesley, 1985, \nwl\hbox{ISBN 0-201-15790-X.}
+\nwl
+Michael Spivak, {\it The Joy of \TeX},
+2nd edition, Addison-Wesley, 1990, \hbox{ISBN 0-8218-2997-1.}
+
+%
+% end of input file: amslatex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: amstex
+%
+\phead{AMSTEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+amstex -- structured text formatting and typesetting
+
+\shead{SYNOPSIS}
+
+{\bf amstex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+The \AmSTeX{} language is described in the book {\it The Joy of \TeX}.
+\AmSTeX{} is a \TeX{} macro package, not a modification to the \TeX{} source
+program, so all the capabilities described in {\bf tex}(1) are present.
+
+The \AmSTeX{} macros encourage writers to think about the content of their
+documents, rather than the form.  The ideal, not always realized, is to have
+no formatting commands (like ``switch to italic'' or ``skip 2~picas'') in
+the document at all; instead, everything is done by specific markup
+instructions: ``emphasize'', ``start a section''.
+
+\AmSTeX{} is the official typesetting system of the American Mathematical
+Society, and nearly all of its publications are typeset using \AmSTeX{}. 
+The online version of AMS Math Reviews uses \AmSTeX{} input syntax for
+display of mathematical material.  AMS authors can provide editors with
+computer-readable \AmSTeX{} files.
+
+For authors more familiar with \LaTeX{}, an AMS-supported variant called
+\AmSLaTeX{} is available.
+
+\shead{SEE ALSO}
+
+{\bf amslatex}(1), {\bf latex}(1), {\bf tex}(1), {\bf slitex}(1).
+\nwl
+Michael Spivak, {\it The Joy of \TeX},
+2nd edition, Addison-Wesley, 1990, \hbox{ISBN 0-8218-2997-1.}
+
+%
+% end of input file: amstex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: bibtex
+%
+\phead{BIBTEX}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+bibtex -- make a bibliography for \LaTeX{} and \TeX
+
+\shead{SYNOPSIS}
+
+{\bf bibtex} [\,{\bf -min-crossrefs}{\it =number}\,] [\,{\bf -verbose}\,]
+             [\,{\it auxname}\,]
+
+\shead{DESCRIPTION}
+
+\BibTeX{} reads the top-level auxiliary ({\it .aux})  file that was output
+during the running of {\bf latex}(1) or {\bf tex}(1) and creates a
+bibliography ({\it .bbl}) file that will be incorporated into the document
+on subsequent runs of \LaTeX{} or \TeX{}.  The {\it auxname} on the command
+line must be given without the {\it .aux} extension.  If you don't give the
+{\it auxname}, the program prompts you for it.
+
+\BibTeX{} looks up, in bibliographic database ({\it .bib}) files specified
+by the \bs bibliography command, the entries specified by the \bs cite and
+\bs nocite commands in the \LaTeX{} or \TeX{} source file. It formats the
+information from those entries according to instructions in a bibliography
+style ({\it .bst}) file (specified by the \bs bibliographystyle command, and
+it outputs the results to the {\it .bbl} file.
+
+The \LaTeX{} manual explains what a \LaTeX{} source file must contain to
+work with \BibTeX{}. Appendix B of the manual describes the format of the
+{\it .bib} files. The `\BibTeX{}ing' document describes extensions and
+details of this format, and it gives other useful hints for using \BibTeX{}.
+
+\shead{OPTIONS}
+
+The {\bf -min-crossrefs} option defines the minimum number of {\bf crossref}
+required for automatic inclusion of the crossref'd entry on the citation
+list; the default is two. Without the {\bf -verbose} option, BibTeX operates
+silently.  With it, a banner and progress reports are printed on {\it
+stdout}.
+
+\shead{ENVIRONMENT}
+
+\BibTeX{} searches the directories in the path defined by the BstInputs\$Path
+environment variable for for {\it .bst} files. If BstInputs\$Path is not set, it
+uses TeXInputs\$Path; and if TeXInputs\$Path is not set, it uses the system default:
+
+\youtype
+\it\TeXInputsDefault
+
+For {\it .bib} files, it uses the BibInputs\$Path environment variable if that is
+set, otherwise the default:
+
+\youtype
+\it\BibInputsDefault
+
+See {\bf tex}(1) for the details of the searching.
+
+If the environment variable TeXMFOutput\$Dir is set, \BibTeX{} attempts to put
+its output files in it, if they cannot be put in the current directory. 
+Again, see {\bf tex}(1). No special searching is done for the {\it .aux}
+file.
+
+\shead{FILES}
+
+\smallskip\halign to\hsize{\it #\hfil\quad&#\hfil\cr
+TeXInputs:*.bst & standard style files\cr
+btxdoc.tex      & ``\BibTeX{}ing'' --- \LaTeX{}able documentation for general
+                  \BibTeX{} users\cr
+btxhak.tex      & ``Designing \BibTeX{} Styles'' --- \LaTeX{}able
+                  documentation for style designers\cr
+btxdoc.bib      & database file for those two documents\cr
+xampl.bib       & database file giving examples of all standard entry types\cr
+btxbst.doc      & template file and documentation for the standard styles\cr}
+
+All those files should be available somewhere on your system.
+
+The host math.utah.edu has a vast collection of {\it .bib} files available
+for anonymous ftp, including references for all the standard \TeX{} books
+and a complete bibliography for TUGboat.
+
+\shead{SEE ALSO}
+
+{\bf latex}(1), {\bf tex}(1).
+\nwl
+Leslie Lamport, {\it \LaTeX\ --- A Document Preparation System},
+Addison-Wesley, 1985, \nwl\hbox{ISBN 0-201-15790-X.}
+
+\shead{AUTHOR}
+
+Oren Patashnik, Stanford University.  This man page describes the web2c
+version of \BibTeX{}.  Other ports of \BibTeX, such as Donald Knuth's
+version using the Sun Pascal compiler, do not have the same path searching
+implementation, or the command-line options.
+
+%
+% end of input file: bibtex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: dvitype
+%
+\phead{DVITYPE}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+dvitype -- translate a dvi file for humans
+
+\shead{SYNOPSIS}
+
+{\bf dvitype} {\it dvi\_file\_name}
+
+\shead{DESCRIPTION}
+
+The {\bf dvitype} program translates a DVI (DeVice Independent) file output
+by (for example) {\bf tex}(1) or {\bf gftodvi}(1), to a file that humans can
+read. It also serves as a DVI file-validating program (i.e., if {\bf
+dvitype} can read it, it's correct) and as an example of a DVI-reading
+program for future device drivers.
+
+The output file can include all commands, just the important
+ones, or none at all (in which case only errors are reported).
+A subinterval of pages may be selected for transliteration; the
+magnification and resolution of the ``output device'' may be
+changed; and so on. All options are specified with an on-line dialog.
+
+The {\it dvi\_file\_name} on the command line must be complete. The {\it
+.dvi} extension is not supplied if omitted. The output goes to {\it stdout}.
+
+\shead{ENVIRONMENT}
+
+The environment variable TeXFonts\$Path is used to search for the TFM files
+used in the DVI file.  See {\bf tex}(1) for the details of the searching. If
+TeXFonts\$Path is not set, it uses the system default:
+
+\youtype
+\it\TeXFontsDefault
+
+\shead{SEE ALSO}
+
+{\bf gftype}(1), {\bf pktype}(1).
+\nwl
+Donald E. Knuth, {\it \TeX ware}.
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program.  It was published as part of the
+{\it\TeX{}ware} technical report, available from the \TeX{} Users Group.
+Howard Trickey and Pavel Curtis originally ported it to UNIX.
+
+%
+% end of input file: dvitype
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: etex
+%
+\phead{ETEX}{1}{3 January 1993}{}{}
+
+\shead{NAME}
+
+etex -- extended plain TeX
+
+\shead{SYNOPSIS}
+
+{\bf etex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+{\bf etex} is an extension of plain \TeX{} described in the book {\it\TeX\
+for the Impatient}. It adds these features (among others) to plain \TeX{}:
+
+\myitem left-justified displays
+\myitem double-column output
+\myitem tables of contents
+\myitem {\it \bs hrule} and {\it \bs vrule}  with a different default than 0.4pt
+\myitem time of day
+\myitem verbatim file listing
+\myitem generalized footnotes
+\myitem blank and black boxes
+\myitem citations using \BibTeX{}
+
+\shead{FILES}
+
+\smallskip\halign to\hsize{\it #\hfil\quad&#\hfil\cr
+eplain.doc.eplain.texi & \TeX{}able documentation of {\bf etex} macros in
+                         {\bf texinfo} format.\cr}
+
+The absolute paths to these files may be different on your system.
+
+The complete {\it eplain} distribution is available via anonymous ftp to the
+Internet host {\it ftp.cs.umb.edu} from the file {\it pub/tex/eplain.tar.Z}
+which is linked to another file containing the most recent version of the
+package.  Major \TeX{} archive sites should also have it.
+
+\shead{SEE ALSO}
+
+{\bf emacs}(1), {\bf info}(1), {\bf initex}(1), {\bf tex}(1), {\bf
+xinfo}(1).
+\nwl
+Karl Berry, {\it eplain ,} TUGboat 11(4), 571--572, 1990.
+\nwl
+Paul W. Abrahams with Karl Berry and Kathryn A. Hargreaves,
+{\it \TeX\ for the Impatient}, Addison-Wesley, 1990, \hbox{ISBN 0-201-51375-7.}
+
+%
+% end of input file: etex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: gftodvi
+%
+\phead{GFTODVI}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+gftodvi -- make proof sheets from generic font files
+
+\shead{SYNOPSIS}
+{\bf gftodvi}  [\,{\bf --overflow-label-offset}{\it =real}\,]
+               [\,{\bf --verbose}\,] [\,{\it gf\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf gftodvi} program converts a generic font ({\it gf}) file output by,
+for example, {\bf mf}(1), to a device independent (DVI) file (that can then
+be typeset using the same software that has already been written for
+\TeX{}). The characters in the {\it gf} file will appear one per page, with
+labels, titles, and annotations as specified in Appendix H (Hardcopy Proofs)
+of {\it The\ \MF{}book}.
+
+{\bf gftodvi} uses other fonts in addition to the main {\it gf} file. A
+`gray' font is used to typeset the pixels that actually make up the
+character. (We wouldn't want all the pixels to be simply black, since then
+labels, key points, and other information would be lost.)  A `title' font is
+used for the information at the top of the page. A `label' font is used for
+the labels on key points of the figure. A `slant' font is used to typeset
+diagonal lines, which otherwise have to be simulated using horizontal and
+vertical rules. The default gray, title, and label fonts are {\it gray},
+{\it cmr8}, and {\it cmtt10}, respectively; there is no default slant font.
+
+To change the default fonts, you can give {\bf special} commands in your
+\MF{} source file, or you can change the fonts online. An online dialog
+ensues if you end the {\it gf\_file\_name} with a `/'. For example,
+
+\youtype
+gftodvi cmr10.300gf/\cr
+{\rm Special font substitution:} grayfont black\cr
+{\rm OK; any more?} grayfontarea SCSI::Disc4.\$.TeX.TeXFonts\cr
+{\rm OK; any more?} slantfont SCSI::Disc4.\$.TeX.TeXFonts.Grayfonts.slantim6\cr
+{\rm OK; any more?} $\langle$RET$\rangle$
+
+will use {\it SCSI::Disc4.{\sl\$}.TeX.TeXFonts.black} as the `gray' font and\nwl
+{\it SCSI::Disc4.{\sl\$}.TeX.TeXFonts.GrayFonts.slantim6} as the `slant'
+font (this name indicates a font for lines with slope \frac1/6 at the
+resolution of an Imagen printer).
+
+The {\it gf\_file\_name} on the command line must be complete. (The program
+prompts you for it if you don't give it.)  Because the resolution is part of
+the extension, it would not make sense to append a default extension as is
+done with \TeX{} or DVI-reading software. The output file name defaults to
+the same root as the {\it gf} file, with the {\it dvi} extension added. For
+example, the input file {\it cmr10.2602gf} would become {\it cmr10.dvi}.
+
+\shead{OPTIONS}
+
+The argument to {\bf --overflow-label-offset} specifies the distance from
+the right edge of the character bounding box at which the overflow equations
+(if any) are typeset. The value is given in \TeX{} points.  The default is a
+little over two inches.
+
+Without the {\bf --verbose} option, {\bf gftodvi} operates silently.  With
+it, a banner and progress report are printed on {\it stdout}.
+
+\shead{ENVIRONMENT}
+
+{\bf gftodvi} looks for {\it gf\_file\_name} using the environment variable
+GFFonts\$Path.  If that is not set, it uses the variable TeXFonts\$Path. If
+that is not set, it uses the system defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+GFFonts\$Path  & \GFFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{FILES}
+
+\smallskip\halign to\hsize{\it #\hfil\quad&#\hfil\cr
+TeXFonts:gray.tfm, \dots & the default fonts\cr
+MFInputs:gray.mf, \dots  & the \MF{} sources (perhaps)\cr}
+
+\shead{SEE ALSO}
+
+{\bf tex}(1), {\bf mf}(1).
+\nwl
+Donald E. Knuth, {\it The \MF{}book}
+(Volume C of {\it Computers\ and\ Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13445-4.}
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program. It was published as part of the {\it
+\MF{}ware} technical report, available from the \TeX{} Users Group. Paul
+Richards ported it to UNIX.
+
+%
+% end of input file: gftodvi
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: gftopk
+%
+\phead{GFTOPK}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+gftopk -- convert generic font files to packed font files
+
+\shead{SYNOPSIS}
+
+{\bf gftopk} [\,{\bf --v}\,] {\it gf\_file\_name} [\,{\it pk\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf gftopk} program converts a generic font file output by, for
+example, {\bf mf}(1), to a packed font file for use by DVI-reading programs.
+Packed font files ({\it pk}\ files) are much smaller than the corresponding
+{\it gf} files, so they are generally the font format of choice.
+
+The {\it gf\_file\_name} on the command line must be complete. Because the
+resolution is part of the extension, it would not make sense to append a
+default extension as is done with \TeX{} or DVI-reading software. The {\it
+pk\_file\_name} defaults to the same (stripped) name as {\it
+gf\_file\_name}, and it is placed in the current working directory with the
+{\it pk} suffix replacing {\it gf}. For example, the input file {\it
+cmr10.300gf} would become {\it cmr10.300pk}.
+
+\shead{OPTIONS}
+
+Unless the {\bf --v} switch is given, {\bf gftopk} operates silently.  With
+{\bf --v}, the version number of the program and statistics about the
+packing are output to {\it stdout}.
+
+\shead{ENVIRONMENT}
+
+{\bf gftopk} looks for {\it gf\_file\_name} first in the current directory. 
+If it is not present there, it uses the environment variable GFFonts\$Path.  If
+that is not set, it uses the variable TeXFonts\$Path.  If that is not set, it uses
+the system defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+GFFonts\$Path & \GFFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{SEE ALSO}
+
+{\bf gftype}(1), {\bf pktogf}(1), {\bf pktype}(1).
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+Tomas Rokicki wrote the program. It was published as part of the {\it
+\MF{}ware} technical report, available from the \TeX{} Users Group. Paul
+Richards originally ported it to UNIX.
+
+%
+% end of input file: gftopk
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: gftype
+%
+\phead{GFTYPE}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+gftype -- translate a generic font file for humans to read
+
+\shead{SYNTAX}
+
+{\bf gftype} [\,{\bf --i}\,] [\,{\bf --m}\,] {\it gf\_file\_name}
+             [\,{\it output\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf gftype} program translates a {\it gf} (generic font) file output
+by, for example, {\bf mf}(1), to a file that humans can read. It also serves
+as a {\it gf} file-validating program (i.e., if {\bf gftype} can read it,
+it's correct) and as an example of a {\it gf}-reading program for other
+software that wants to read {\it gf} files.
+
+The {\it gf\_file\_name} on the command line must be complete. Because the
+resolution is part of the extension, it would not make sense to append a
+default extension as is done with \TeX{} or DVI-reading software. If no {\it
+output\_file\_name} is specified, the output goes to {\it stdout}.
+
+\shead{OPTIONS}
+
+The output file includes bitmap images of the characters, if {\bf --i} is
+given on the command line, and a symbolic listing of the {\it gf} commands,
+if {\bf --m} is specified.
+
+\shead{ENVIRONMENT}
+
+{\bf gftype} looks for {\it gf\_file\_name} using the environment variable
+GFFonts\$Path.  If that is not set, it uses the variable TeXFonts\$Path.  If
+that is not set, it uses the system defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+GFFonts\$Path  & \GFFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+\shead{SEE ALSO}
+
+{\bf dvitype}(1), {\bf pktype}(1).
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+David Fuchs and Don Knuth wrote the program.  It was published as part of
+the {\it \MF{}ware} technical report, available from the \TeX{} Users Group.
+Paul Richards originally ported it to UNIX.
+
+%
+% end of input file: gftype
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: initex
+%
+\phead{INITEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+initex -- initial TeX
+
+\shead{DESCRIPTION}
+
+{\bf initex} is a special version of the \TeX{} program that has no
+preloaded macro packages, but is capable of converting a macro package into
+a special preformatted binary file, called a {\it format} ({\it .fmt}) file. 
+That format file can subsequently be read at high speed by {\bf virtex}.
+
+Major macro packages may require \TeX{} to process many thousands of lines
+of macros, and open and read scores of font files, all of which would
+contribute to a sizable startup overhead if the job had to be done every
+time \TeX{} was run. {\bf initex} allows \TeX{} to do the job once, and then
+save the results in a binary format file that can be later loaded more
+rapidly by {\bf virtex}.
+
+{\bf initex} is normally required only at the time \TeX{} is installed, or
+whenever major macro packages are updated.  Thus, it will be rare for anyone
+but system installers to invoke it.  Nevertheless, it is just a normal
+program without special privileges, so ordinary users can use it to prepare
+a private format file.
+
+Here is how you can ask {\bf initex} to prepare format files for several
+major packages:
+
+For plain {\bf tex}:
+
+\youtype
+initex plain \bs dump
+
+For {\bf amstex}:
+
+\youtype
+initex \&plain amstex \bs dump
+
+For {\bf etex}:
+
+\youtype
+initex \&plain eplain \bs dump
+
+For {\bf lamstex}:
+
+\youtype
+initex \&plain amstexl \bs input lamstex \bs dump
+
+For {\bf latex}:
+
+\youtype
+initex lplain \bs dump
+
+For {\bf slitex}:
+
+\youtype
+initex splain \bs dump
+
+For {\bf texinfo}:
+
+\youtype
+initex \&plain texinfo @dump
+
+The last argument is different from the previous examples because {\bf
+texinfo} redefines the \TeX{} escape character from backslash to at-sign. 
+As for {\bf amstex}, the file {\it plain.fmt} must already be available.
+
+Note that several of these require that the format file for plain \TeX{} be
+available, since the first argument word {\it \&plain} asks for the loading
+of the file {\it plain.fmt}.
+
+It does not matter whether the command-line arguments are passed as a
+single argument, or as separate arguments, since \TeX{} reconstructs
+the command line anyway.
+
+You must move the created {\it .fmt} file to a place where {\bf tex}(1)
+can find it. See {\bf tex}(1) for more details.
+
+In order to be able to use {\bf bigvirtex}(1) you need to create new format
+files, using {\bf biginitex} instead of {\bf initex}. The difference between
+{\bf initex} and {\bf biginitex} is internal memory capacity and speed. The
+{\bf biginitex} program is slower because of disc swapping (it must be
+run in a virtual task window).
+
+\shead{SEE ALSO}
+
+{\bf amslatex}(1), {\bf amstex}(1), {\bf lamstex}(1), {\bf latex}(1), {\bf
+slitex}(1), {\bf tex}(1), {\bf virtex}(1).
+
+%
+% end of input file: initex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: lamstex
+%
+\phead{LAMSTEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+lamstex -- structured text formatting and typesetting
+
+\shead{SYNOPSIS}
+
+{\bf lamstex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+The \LAmSTeX{} language is described in the book {\it \LAmSTeX: The
+Synthesis}. \LAmSTeX{} is a new system that augments \AmSTeX{} with
+\LaTeX{}-like features, but retains the syntactical flavor of \AmSTeX{}.  It
+can be compared with \AmSLaTeX{}, which augments \LaTeX{} with
+\AmSTeX{}-like features.
+
+\LAmSTeX{} is a \TeX{} macro package, not a modification to the \TeX{}
+source program, so all the capabilities described in {\bf tex}(1) are
+present.
+
+The \LAmSTeX{} macros encourage writers to think about the content of their
+documents, rather than the form.  The ideal, not always realized, is to have
+no formatting commands (like ``switch to italic'' or ``skip 2~picas'') in
+the document at all; instead, everything is done by specific markup
+instructions: ``emphasize'', ``start a section''.
+
+\shead{SEE ALSO}
+
+{\bf amslatex}(1), {\bf amstex}(1), {\bf latex}(1), {\bf tex}(1), {\bf
+slitex}(1).
+\nwl
+Michael Spivak, {\it \LAmSTeX: The Synthesis},
+The \TeX{}plorators Corporation, 3701 W. Alabama, Suite 450-273,
+Houston, TX 77027, USA, 1989.
+
+%
+% end of input file: lamstex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: latex
+%
+\phead{LATEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+latex -- structured text formatting and typesetting
+
+\shead{SYNOPSIS}
+
+{\bf latex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+The \LaTeX{} language is described in the book {\it \LaTeX\ -- A Document
+Preparation System}. \LaTeX{} is a \TeX{} macro package, not a modification
+to the \TeX{} source program, so all the capabilities described in {\bf
+tex}(1) are present.
+
+The \LaTeX{} macros encourage writers to think about the content of their
+documents, rather than the form.  The ideal, not always realized, is to have
+no formatting commands (like ``switch to italic'' or ``skip 2~picas'') in
+the document at all; instead, everything is done by specific markup
+instructions: ``emphasize'', ``start a section''.
+
+\shead{SEE ALSO}
+
+{\bf amslatex}(1), {\bf amstex}(1), {\bf slitex}(1), {\bf tex}(1),
+\nwl
+Leslie Lamport, {\it \LaTeX\ --- A Document Preparation System},
+Addison-Wesley, 1985, \nwl\hbox{ISBN 0-201-15790-X.}
+
+%
+% end of input file: latex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: mf
+%
+\phead{MF}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+mf, inimf, virmf -- Metafont, a language for alphabet design
+
+\shead{SYNOPSIS}
+
+{\bf mf} [\,first line\,]\nwl
+{\bf inimf} [\,first line\,] or {\bf biginimf} [\,first line\,]\nwl
+{\bf virmf} [\,first line\,] or {\bf bigvirmf} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+\MF{} reads the program in the specified files and outputs font rasters (in
+{\it gf} format) and font metrics (in {\it tfm} format).  The \MF{} language
+is described in {\it The \MF\/book}.
+
+Like \TeX{}, \MF{}  is normally used with a large body of precompiled
+macros, and font generation in particular requires the support of several
+macro files.  The basic program as compiled is called {\bf inimf}; it can be
+used to precompile macros into a {\it .base} file.  The {\bf virmf} variant
+is used to reload the {\it .base} files quickly.  Typically, {\bf virmf}
+isn't used directly. There is a set of aliases that automatically load a
+base file. You can load a different base by saying, e.g., {\it virmf
+\&mybase}. The two programs {\bf biginimf} and {\bf bigvirmf} are versions
+of \MF\ that have much more internal memory, but they need to be run in a
+virtual task window and so they're slower because of disc swapping.
+
+As described in {\it The \MF\/book}, the command line (or first input line)
+should otherwise begin with a file name or a \bs \,controlsequence. The
+normal usage is to say
+
+\youtype
+{\bf mf} \bs mode=$\langle$printengine$\rangle$; [\,mag=magstep({\it
+n}\/);\,] input {\it font}
+
+to start processing {\it font.mf}. (Or you can just say {\it mf} and give
+the other stuff on the next line, without quotes.) Other control sequences,
+such as {\it batchmode} (for silent operation) can also appear. The name
+{\it font} will be the ``jobname'', and is used in forming output file
+names. If \MF{} doesn't get a file name in the first line, the jobname is
+{\it mfput}. The default extension, {\it .mf}, can be overridden by
+specifying an extension explicitly.
+
+A log of error messages goes into the file  {\it jobname.log}. The output
+files are {\it jobname.tfm} and {\it jobname.$\langle$number\/$\rangle$gf},
+where $\langle$number$\rangle$ depends on the resolution and magnification
+of the font.  The {\it mode} in this example is shown generically as
+$\langle$printengine$\rangle$, a symbolic term for which the name of an
+actual device or, most commonly, the name {\it localfont} (see below) must
+be substituted. If the mode is not specified or is not valid for your site,
+\MF{} will default to {\it proof} mode which produces large character images
+for use in font design and refinement.  Proof mode can be recognized by the
+suffix {\it .2602gf} after the jobname.  Examples of proof mode output can
+be found in {\it Computer\ Modern\ Typefaces} (Volume E of {\it Computers\
+and\ Typesetting}). The system of {\it magsteps} is identical to the system
+used by \TeX{}, with values generally in the range 0.5, 1.0, 2.0, 3.0, 4.0
+and 5.0. A listing of {\it gf} numbers for 240-dpi, 300-dpi and 360-dpi
+fonts is shown below.
+
+\smallskip
+\halign{mag:=magstep(#1)\hfil&&\quad\hfil #\cr
+  \omit\hfil & \bf 240 dpi & \bf 300 dpi & \bf 360 dpi\cr
+           0 & 240         & 300         & 360\cr
+         0.5 & 263         & 329         & 394\cr
+           1 & 288         & 360         & 432\cr
+           2 & 346         & 432         & 518\cr
+           3 & 415         & 518         & 622\cr
+           4 & 498         & 622         & 746\cr
+           5 & 597         & 746         & 896\cr}
+\smallskip
+
+Magnification can also be specified not as a magstep but as an
+arbitrary value, such as 1.315, to create special character sizes.
+
+Before font production can begin, it is necessary to set up the appropriate
+base files.  The minimum set of components for font production for a given
+print-engine is the {\it plain.mf} macro file and the local {\it mode\_def}
+file.  The macros in {\it plain.mf} can be studied in an appendix to the
+{\it \MF\/book}; they were developed by Donald E. Knuth, and this file
+should never be altered except when it is officially upgraded. Each {\it
+mode\_def} specification helps adapt fonts to a particular print-engine.
+There is a regular discussion of {\it mode\_def}s in {\it TUGboat}, the
+journal of the \TeX{} Users Group. The local ones in use on this computer
+should be in {\it MFInputs:modes.mf}. With only {\it plain.mf} and the {\it
+modes} file loaded it is possible to create fonts of simple characters, such
+as those used for the \MF{} logo, and those used for the \LaTeX{} line and
+circle fonts, but the production of Computer Modern fonts would be
+facilitated by making a {\it cmmf.base} file (which includes the macros in
+{\it cmbase.mf} as well as those in {\it plain.mf}).
+
+Several environment variables can be used to set up directory
+paths to search when \MF{} opens a file for input.
+For example, the command
+
+\youtype
+Set MFInputs\$Path ,SCSI::Disc4.\$.TeX.MFInputs..,SCSI::Disc4.\$.TeX.
+
+would cause all invocations of \MF{} and its derivatives to look for
+\bs input files first in the current directory, then in a 
+directory {\it SCSI::Disc4.\$.TeX.MFInputs} and all its subdirectories
+(indicated by the double dots)
+user's {\it }, and finally in the directory {\it SCSI::Disc4.\$.TeX}.
+
+Normally, the user will place the command sequence which sets up the
+MFInputs\$Path environment variable in his or her {\it !Boot} file or a file
+that's called by {\it !Boot}.
+
+The {\it e} response to \MF\,'s error-recovery mode might invoke an editor
+at the erroneous line of the source file. There is an environment variable,
+MFEdit, that overrides the default editor. It should contain a string with
+"\%s" indicating where the filename goes and "\%d" indicating where the
+decimal linenumber (if any) goes. For example, an MFEdit string for the {\bf
+vi} editor can be set with the command
+
+\youtype
+Set MFEdit "vi +\%d \%s"
+
+The {\bf ENVIRONMENT} section below lists the relevant environment
+variables, and their defaults.
+
+A convenient file in the library is {\it null.mf}, containing nothing. When
+{\bf mf} can't find the file it thinks you want to input, it keeps asking
+you for another file name; responding `null' gets you out of the loop if you
+don't want to input anything.
+
+\shead{ONLINE GRAPHICS OUTPUT}
+
+\MF\ can use most modern displays, so you can see its output without
+printing.  Chapter 23 of {\it The\ \MF\/book} describes what you can do. 
+This implementation of \MF{}  is not yet able to use the WIMP desktop, but a
+version that will do that is being developed.
+
+\shead{ENVIRONMENT}
+
+The default values for all environment variables are set at the time of
+compilation in a file {\it paths.h}. See {\bf tex}(1) for the details of the
+searching.  If the environment variable TeXMFOuput is set, \MF{} attempts to
+put its output files in it, if they cannot be put in the current directory. 
+Again, see {\bf tex}(1).
+
+\smallskip\halign to \hsize{#\hfil&\quad#\hfil\cr
+MFInputs\$Path & Search path for {\it input} and {\it openin} files. Default:\cr
+               & \it\quad\MFInputsDefault\cr
+MFBase\$Path   & Search path for base files.  Default:\cr
+               & \it\quad\MFBasesDefault\cr
+MFPool\$Path   & Search path for \MF{} internal strings.
+                 (Used by {\bf inimf} only.) Default:\cr
+               & \it\quad\MFPoolDefault\cr
+MFEdit         & Command template for switching to editor.  Default:\cr
+               & \it\quad vi +\%d \%s\cr}
+
+\shead{FONT UTILITIES}
+
+A number of utility programs are available.
+The following is a partial list of available utilities and their purpose.
+Consult your local \MF{} guru for details.
+
+ \smallskip\halign to \hsize{\bf \smallblock\hskip3pt #\hfil\quad&#\hfil\cr
+ gftopk  & Takes a {\it gf} file and produces a more tightly packed
+           {\it pk} font file.\cr
+ gftodvi & Produces proof sheets for fonts.\cr
+ gftype  & Displays the contents of a {\it gf} file in mnemonics
+           and/or images.\cr
+ pktype  & Mnemonically displays the contents of a {\it pk} file.\cr
+ mft     & Formats a source file as shown in
+           {\it Computer Modern Typefaces}.\cr}
+
+\shead{FILES}
+
+\smallskip\halign to \hsize{\it #\hfil&\quad#\hfil\cr
+MFPool:mf.pool       & Encoded text of \MF{}'s messages\cr
+MFBases:*.base       & \MF{} base files\cr
+MFInputs:plain.mf    & The ``standard'' macro package\cr
+MFInputs:modes.mf    & The file of {\it mode\_def}s for your site's various
+                       printers\cr
+MFInputs:CMSources.* & \MF{} sources for Computer Modern\cr}
+
+\shead{SUGGESTED READING}
+
+Donald E. Knuth, {\it The \MF\/book}
+(Volume C of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13445-4.}
+\nwl
+Donald E. Knuth, {\it \MF: The Program}
+(Volume D of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13438-1.}
+\nwl
+Donald E. Knuth, {\it Computer Modern Typefaces}
+(Volume E of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13446-2.}
+\nwl
+{\it TUGboat} (the journal of the \TeX{} Users Group).
+
+\shead{COMMENTS}
+
+Warning: ``Type design can be hazardous to your other interests.
+Once you get hooked, you will develop intense feelings about letterforms;
+the medium will intrude on the messages that you read.
+And you will perpetually be thinking of improvements to the fonts that
+you see everywhere, especially those of your own design.''
+
+\shead{SEE ALSO}
+
+{\bf gftopk}(1), {\bf gftodvi}(1), {\bf gftype}(1), {\bf mft}(1), {\bf
+pltotf}(1), {\bf tftopl}(1).
+
+\shead{BUGS}
+
+On January 4, 1986 the ``final'' bug in \MF{} was discovered and removed. If
+an error still lurks in the code, Donald E. Knuth promises to pay a finder's
+fee which doubles every year to the first person who finds it.  Happy
+hunting.
+
+\shead{AUTHORS}
+
+\MF{} was designed by Donald E. Knuth, who implemented it using his WEB
+system for Pascal programs.  It was originally ported to UNIX by Paul
+Richards at the University of Illinois at Urbana-Champaign.  This page was
+mostly written by Pierre MacKay.
+
+%
+% end of input file: mf
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: mft
+%
+\phead{MFT}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+mft -- translate Metafont code to TeX code for prettyprinting
+
+\shead{SYNOPSIS}
+
+{\bf mft} {\it mf\_file\_name[.mf]}
+  [\,[\,{\bf --c}\,] or [\,{\it change\_file\_name[.ch]}\,]\,]
+  [\,[\,{\bf --s}\,] or [\,{\it style\_file\_name[.mft]}\,]\,]
+
+\shead{DESCRIPTION}
+
+The {\bf mft} program creates a \TeX{} file from a \MF{} program. It takes
+appropriate care of typographic details like page layout and the use of
+indentation, italics, boldface, etc., as illustrated in the book {\it
+Computer\ Modern\ Typefaces}. Special conventions in \MF{} comments allow
+you to control things that would not otherwise come out right; section 1 of
+the MFT source program in the {\it \MF{}ware} report explains these rules.
+
+The command line has one required file name and two optional file names. The
+required one is a \MF{} source file; there is also an optional change file
+(which works just as the change files to {\bf tangle}(1) and {\bf weave}(1)
+do) and an optional style file (which is prepended to everything).
+
+A file name that doesn't contain a dot is always given an extension, either
+{\it .mf} (\MF) or {\it .ch} (change) or {\it .mft} (style). If no style
+file is specified, the style file {\it plain.mft} is automatically used. The
+{\it change\_file\_name} is not searched for using any paths. The {\it .mf}
+file is searched for using the MFINPUTS environment variable if you have set
+it, or else the system default:
+
+\youtype
+\it\MFInputsDefault
+
+The style file is searched for using the TeXInputs\$Path environment
+variable; its default value is:
+
+\youtype
+\it\TeXInputsDefault
+
+See {\bf tex}(1) for the details of the searching.
+
+The output \TeX{} file name is formed by using {\it .tex} in place of the
+extension of {\it mf\_file\_name}.
+
+\shead{OPTIONS}
+
+Specify command-line options {\bf --c} to suppress the reading of a change
+file, and {\bf --s} to suppress the reading of a style file.
+
+\shead{FILES}
+
+\smallskip\halign to \hsize{\it #\hfil&\quad#\hfil\cr
+TeXInputs:mftmac.tex & \TeX{} macros used by {\bf mft} output.\cr
+TeXInputs:plain.mft  & Default style file.\cr
+TeXInputs:cmbase.mft & Style file for Computer Modern.\cr}
+
+\shead{SEE ALSO}
+
+{\bf mf}(1), {\bf weave}(1).
+\nwl
+Donald E. Knuth, {\it Computer Modern Typefaces}
+(Volume E of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13446-2.}
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program, and he ported it to UNIX with the help of
+Pierre MacKay and the UNIX port of {\bf weave} by Howard Trickey and Pavel
+Curtis. The program is published in the {\it \MF{}ware} technical report,
+available from the \TeX{} Users Group.
+
+%
+% end of input file: mft
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: patgen
+%
+\phead{PATGEN}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+patgen -- generate patterns for TeX hyphenation
+
+\shead{SYNOPSIS}
+
+{\bf patgen} dictionary\_file pattern\_file log\_file translate\_file
+
+\shead{DESCRIPTION}
+
+The {\bf patgen} program reads the {\it dictionary\_file} and produces the
+{\it pattern\_file}, writing a transcript of its actions on the {\it
+log\_file}. The {\it dictionary\_file} should contain a list of hyphenated
+words and previously-generated patterns.
+
+The patterns thus generated can be read by {\bf initex} for use in
+hyphenating words. For a (very) long example of {\it patgen}'s output, see
+{\it TeXInputs:hyphen.tex}, which contains the patterns \TeX{} uses for
+English. At some sites, patterns for several other languages may be
+available, and the local {\bf tex} programs may have them preloaded; consult
+your {\it Local Guide} or your system administrator for details.
+
+All filenames must be complete; no adding of default
+extensions or path searching is done.
+
+\shead{FILES}
+
+{\it TeXInputs:hyphen.tex}\quad Patterns for English.
+
+\shead{SEE ALSO}
+
+Frank Liang, {\it Word hy-phen-a-tion by com-puter},
+STAN-CS-83-977, Stanford University Ph.D. thesis, 1983.
+\nwl
+Donald E. Knuth, {\it The\ {\it\TeX}book},
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13447-0, Appendix H.}
+
+\shead{AUTHORS}
+
+Frank Liang wrote the first version of this program.  Peter Breitenlohner
+made a substantial revision in 1991 for \TeX{} 3. The first version was
+published as the appendix to the {\it \TeX ware} technical report, available
+from the \TeX{} Users Group. Howard Trickey originally ported it to UNIX.
+
+%
+% end of input file: patgen
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: pktogf
+%
+\phead{PKTOGF}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+pktogf -- convert packed font files to generic font files
+
+\shead{SYNOPSIS}
+
+{\bf pktogf} [\,{\bf --v}\,] {\it pk\_file\_name} [\,{\it gf\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf pktogf} program converts a packed font file ({\it pk}) to a generic
+font file ({\it gf}). Packed font files are much smaller than the
+corresponding {\it gf} files, but some DVI readers only understand {\it gf}
+files.
+
+The {\it pk\_file\_name} on the command line must be complete. Because the
+resolution is part of the extension, it would not make sense to append a
+default extension as is done with \TeX{} or DVI-reading software. The {\it
+gf\_file\_name} defaults to the same (stripped) name as {\it
+pk\_file\_name}, and it is placed in the current working directory with the
+{\it gf} suffix replacing {\it pk}. For example, the input file {\it
+io.300pk} would become {\it io.300gf}.
+
+Double-clicking on a {\it pk} file also runs {\bf pktogf}. The resulting
+{\it gf} file appears in the same directory as the original {\it pk file}.
+
+\shead{OPTIONS}
+
+Unless the {\bf --v} switch is given, {\bf pktogf} operates silently.  With
+{\bf --v}, the version number of the program and statistics about the
+unpacking are output to {\it stdout}.
+
+\shead{ENVIRONMENT}
+
+{\bf pktogf} looks for {\it pk\_file\_name} using the environment variable
+PKFonts\$Path.  If that is not set, it uses the variable TeXPKs\$Path.  If
+that is not set, it uses TeXFonts\$Path.  If that is not set, it uses the
+system defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+PKFonts\$Path  & \PKFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{SEE ALSO}
+
+{\bf gftopk}(1), {\bf gftype}(1), {\bf pktype}(1).
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+Tomas Rokicki wrote the program. Pierre MacKay adapted it for compilation
+with {\bf web2c}.
+
+%
+% end of input file: pktogf
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: pktype
+%
+\phead{PKTYPE}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+pktype -- translate a packed font file for humans to read
+
+\shead{SYNTAX}
+
+{\bf pktype} {\it pk\_file\_name} [\,{\it output\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf pktype} program translates a packed font file ({\it pk}) (output
+by, for example, {\bf gftopk}(1) to a file that humans can read. It also
+serves as a {\it pk} file-validating program (i.e., if {\bf pktype} can read
+it, it's correct) and as an example of a {\it pk}-reading program for other
+software that wants to read {\it pk} files.
+
+The {\it pk\_file\_name} on the command line must be complete. Because the
+resolution is part of the extension, it would not make sense to append a
+default extension as is done with \TeX{} or DVI-reading software. If no {\it
+output\_file\_name} is specified, the output goes to the {\it stdout}.
+
+The output file gives a compact encoding of the packed encoding, using
+conventions described in the source code. Run lengths of black pixels
+alternate with parenthesized run lengths of white pixels, and brackets
+are used to indicate when a row should be repeated.
+
+\shead{ENVIRONMENT}
+
+{\bf pktype} looks for {\it pk\_file\_name} using the environment variable
+PKFonts\$Path.  If that is not set, it uses the variable TeXPKs\$Path.  If
+that is not set, it uses TeXFonts.  If that is not set, it uses the system
+defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+PKFonts\$Path  & \PKFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{SEE ALSO}
+
+{\bf dvitype}(1), {\bf gftopk}(1), {\bf gftype}(1).
+\nwl
+Donald E. Knuth et al., {\it \MF{}ware}.
+
+\shead{AUTHORS}
+
+Tomas Rokicki wrote the program.
+Donald E. Knuth originally ported it to UNIX.
+Pierre MacKay adapted it for compilation with
+{\bf web2c}.
+
+%
+% end of input file: pktype
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: pltotf
+%
+\phead{PLTOTF}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+pltotf -- convert WEB property list files to \TeX{} font metric (tfm) format
+
+\shead{SYNOPSIS}
+
+{\bf pltotf} [\,{\bf --verbose}\,] {\it pl\_file\_name} {\it tfm\_file\_name}
+
+\shead{DESCRIPTION}
+
+The {\bf pltotf} program translates a (human-oriented) WEB property list
+file to a (program-oriented) \TeX{} font metric file. Thus, after editing
+the property list file, a TFM file can be generated for use with, for
+example, {\bf tex}(1).
+
+Both the {\it pl\_file\_name} and the {\it tfm\_file\_name} must be
+complete; no adding of default extensions or path searching is done.
+
+\shead{OPTIONS}
+
+Without the {\bf --verbose} option, {\bf pltotf} operates silently.  With
+it, a banner and progress report are printed on {\it stdout}.
+
+\shead{SEE ALSO}
+
+{\bf tftopl}(1).
+\nwl
+Donald E. Knuth, {\it {\it\TeX}ware}.
+\nwl
+Donald E. Knuth, {\it The\ \MF{}book},
+(Volume C of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13445-4.}
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program. It was published as part of the {\it
+{\it\TeX}ware} technical report, available from the \TeX{} Users Group.
+Howard Trickey, Pavel Curtis, and Richard Furuta originally ported it to
+UNIX.
+
+%
+% end of input file: pltotf
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: pooltype
+%
+\phead{POOLTYPE}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+pooltype -- display a WEB pool file
+
+\shead{SYNOPSIS}
+
+{\bf pooltype} {\it pool\_file\_name}
+
+\shead{DESCRIPTION}
+
+The {\bf pooltype} program translates a (program-oriented) WEB string pool
+file to a (human-oriented) text file.
+
+The {\it pool\_file\_name} must be complete; no adding of default extensions
+or path searching is done.
+
+\shead{SEE ALSO}
+
+{\bf tangle}(1).
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program and originally ported it to UNIX. It was
+published as part of the {\it \TeX ware} technical report, available
+from the \TeX{} Users Group.
+
+%
+% end of input file: pooltype
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: slitex
+%
+\phead{SLITEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+slitex -- make \LaTeX{} slides
+
+\shead{SYNOPSIS}
+
+{\bf slitex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+The {\bf slitex} program is a variant of {\bf latex}(1), designed for
+generating slides. It is described in Appendix A of {\it \LaTeX\ -- A
+Document Preparation System}. All the capabilities described in {\bf tex}(1)
+are present.
+
+\shead{SEE ALSO}
+
+{\bf latex}(1), {\bf tex}(1).
+\nwl
+Leslie Lamport, {\it \LaTeX\ -- A Document Preparation System},
+Addison-Wesley, 1985, \nwl\hbox{ISBN 0-201-15790-X.}
+
+%
+% end of input file: slitex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: tangle
+%
+\phead{TANGLE}{1}{12 February 1993}{}{}
+
+\shead{NAME}
+tangle -- translate WEB to Pascal
+
+\shead{SYNOPSIS}
+
+{\bf tangle} {\it webfile[.web]} [\,{\it changefile[.ch]}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf tangle} program converts a WEB source document into a Pascal
+program that may be compiled in the usual way with the on-line Pascal
+compiler (e.g., {\bf pc}(1)). The output file is all in lower case and
+packed into lines of 72 characters or less, with the only concession to
+readability being the termination of lines at semicolons when this can be
+done conveniently.
+
+The WEB language allows you to prepare a single document containing all the
+information that is needed both to produce a compilable Pascal program and
+to produce a well-formatted document describing the program in as much
+detail as the writer may desire.  The user of WEB must be familiar with both
+\TeX{} and Pascal.  WEB also provides a relatively simple, although
+adequate, macro facility that permits a Pascal program to be written in
+small easily-understood modules.
+
+The command line should have either one or two names on it. The first is
+taken as the WEB file (and {\it .web} is added if there is no extension). If
+there is another name, it is a change file (and {\it .ch} is added if there
+is no extension).  The change file overrides parts of the WEB file, as
+described in the WEB system documentation.
+
+The output files are a Pascal file and a string pool file, whose names are
+formed by adding {\it .p} and {\it .pool} respectively to the root of the
+WEB file name.
+
+\shead{SEE ALSO}
+
+{\bf pc}(1), {\bf pxp}(1) (for formatting {\bf tangle} output when
+debugging), {\bf tex}(1).
+\nwl
+Donald E. Knuth, {\it The WEB System of Structured Documentation}.
+\nwl
+Donald E. Knuth, {\it Literate Programming}, Computer Journal {\bf 27},
+97--111, 1984.
+\nwl
+Wayne Sewell, {\it Weaving a Program}, Van Nostrand Reinhold,
+1989, \hbox{ISBN 0-442-31946-0.}
+\nwl
+Donald E. Knuth, {\it \TeX: The Program}
+(Volume B of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13437-3.}
+\nwl
+Donald E. Knuth, {\it \MF: The Program}
+(Volume D of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13438-1.}
+
+These last two are by far the largest extant examples of WEB programs.
+
+There is an active Internet electronic mail discussion list on the subject
+of literate programming; send a subscription request to {\tt
+litprog-request@shsu.edu} to join.
+
+\shead{AUTHORS}
+
+WEB was designed by Donald E. Knuth, based on an earlier system called DOC
+(implemented by Ignacio Zabala). The {\bf tangle} and {\bf weave} programs
+are themselves written in WEB. The system was originally ported to UNIX at
+Stanford by Howard Trickey, and at Cornell by Pavel Curtis.
+
+%
+% end of input file: tangle
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: tex
+%
+\phead{TEX}{1}{29 January 1993}{}{}
+
+\shead{NAME}
+
+tex, virtex -- text formatting and typesetting
+
+\shead{SYNOPSIS}
+
+{\bf tex} [\,first line\,]\nwl
+{\bf virtex} [\,first line\,] or {\bf bigvirtex} [\,first line\,]
+
+\shead{DESCRIPTION}
+
+\TeX{} formats the interspersed text and commands contained in the named
+files and outputs a typesetter independent file (called {\it DVI}, which is
+short for {\it DeVice Independent}). \TeX{} capabilities and language are
+described in {\it The \TeX book}. The program {\bf bigvirtex} is a version
+of \TeX\ that has much more internal memory, but it needs to be run in a
+virtual task window and so it's slower because of disc swapping.
+
+\TeX{} is normally used with a large body of precompiled macros, and there
+are several specific formatting systems, such as \LaTeX{}, which require the
+support of several macro files.  The basic programs as compiled are called
+{\bf initex} and {\bf virtex}, and are distinguished by the fact that {\bf
+initex} can be used to precompile macros into a {\it .fmt} file, which is
+used by {\it virtex}. On the other hand, {\bf virtex} starts more quickly
+and can read a precompiled {\it .fmt} file, but it cannot create one.  It is
+the version of \TeX{} which is usually invoked in production, as opposed to
+installation.
+
+Any arguments given on the command line to the \TeX{} programs are passed to
+them as the first input line. As described in {\it The \TeX book}, that
+first line should begin with a filename or a \bs controlsequence. The normal
+usage is to say
+
+\youtype
+tex paper
+
+to start processing {\it paper.tex.} The name {\it paper} will be the
+``jobname'', and is used in forming output filenames. If \TeX{} doesn't get
+a filename in the first line, the jobname is {\it texput}. The default
+extension, {\it .tex}, can be overridden by specifying an extension
+explicitly.
+
+If there is no {\it paper.tex} in the current directory, \TeX{} will look
+through a search path of directories to try to find it. If {\it paper} is
+the ``jobname'', a log of error messages, with rather more detail than
+normally appears on the screen, will appear in {\it paper.log,} and the
+output file will be in {\it paper.dvi.} The system library directories {\it
+TeXInputs:} contain the basic macro package {\it plain.tex,} described
+in {\it The \TeX book}, as well as several others. Except when {\it .fmt}
+files are being prepared it is unnecessary to {\it \bs input plain}, since
+almost all instances of \TeX{} begin by loading {\it plain.fmt}. This means
+that all of the control sequences discussed in {\it The \TeX book} are known
+when you invoke {\bf tex}. For a discussion of {\it .fmt} files, see below.
+
+The {\it e} response to \TeX{}'s error prompt might cause an editor to start
+up at the current line of the current file. The environment variable TeXEdit
+can be used to change the editor used.  It can contain a string with "\%s"
+indicating where the filename goes and "\%d" indicating where the decimal
+line number (if any) goes. For example, a TeXEdit string for {\bf vi} can be
+set with the command
+
+\youtype
+Set TeXEdit vi +\%d \%s
+
+A convenient file in the library is {\it null.tex}, containing nothing. When
+\TeX{} can't find a file it thinks you want to input, it keeps asking you
+for another filename; responding `null' gets you out of the loop if you
+don't want to input anything.  You can also type your EOF character
+(control-D).
+
+The {\bf initex} and {\bf virtex} programs can be used to create
+fast-loading versions of \TeX{} based on macro source files. The {\bf
+initex} program is used to create a {\it format (.fmt)} file that permits
+fast loading of fonts and macro packages. After processing the fonts and
+definitions desired, a {\it \bs dump} command will create the format file.
+The format file is used by {\bf virtex}. It needs to be given a format
+filename as the first thing it reads. A format filename is preceded by
+an~\&.
+
+Fortunately, it is often not necessary to make explicit references to the
+format file.  The present version of arm\TeX{}, has a file {\it set-tex},
+that sets a host of useful aliases that run {\bf virtex} with a suitable
+format file.
+
+When looking for a font {\it f}, \TeX{} (and its companion programs) first
+look for a file starting with {\it f} in the various font directories (see
+the next section).  If no such file is found, it then looks for a file {\it
+texfonts.map} in each of the font directories in turn.  Each non-blank
+non-comment line of {\it texfonts.map} specifies mappings from one name to
+another.  (Comments start with \% and continue to the end of the line.)  The
+target name is the first word (words are separated by spaces or tabs) and
+the source name is the second.  (Subsequent words are ignored, so that
+information intended for other programs can be given there.)  Thus, going
+back to {\it f} for a moment, if \TeX{} reads a {\it texfonts.map} entry
+that looks like {\it g f} it will then search for a font file starting with
+{\it g}.
+
+\shead{ENVIRONMENT}
+
+The defaults for all environment variables are set at the time of
+compilation. All paths are comma-separated, just like RISC OS paths. But as
+an extra \TeX{}, which does the path searching by itself, allows double dots
+to be at the end of a directory name. If one of the components in a search
+path ends with two such dots, e.g.,
+
+\youtype
+\it SCSI::Disc4.{\sl\$}.TeX.TeXFonts..
+
+then all (first-level) subdirectories of the given path are searched,
+instead of the directory itself.
+
+All the programs in the {\bf web2c} distribution (as well as some others)
+use this same search method.
+
+Normally, \TeX{} puts its output files in the current directory.  If any
+output file cannot be opened there, it tries to open it in the directory
+specified in the environment variable TeXMFOutput\$Dir. There is no default value
+for that variable.  For example, if you say {\it tex\ paper} and the current
+directory is not writable, if TeXMFOutput\$Dir has the value {\it
+SCSI::Disc4.tmp}, \TeX{} attempts to create {\it SCSI::Disc4.tmp.paper.log}
+(and {\it SCSI::Disc4.tmp.paper.dvi}, if any output is produced.)
+
+If an output directory does not exist (which is often the case for {\it
+texput}), \TeX{} tries to create it.
+
+When running \TeX{} with an absolute path name (e.g., by double-clicking on
+a {\it tex} file, the path to this file is used as the ``current
+directory''. This way, \TeX{} is completely independent of the real current
+directory.
+
+\smallskip\halign to\hsize{#\hfil\quad&#\hfil\cr
+TeXInputs\$Path & Search path for {\it \bs input} and
+        {\it \bs openin} files.\cr
+                   & This should probably start with ``,'', so
+                     that user files are found before system\cr
+                  & files. Default:\cr
+                     & \it\quad\TeXInputsDefault\cr
+TeXFonts\$Path  & Search path for font metric ({\it .tfm}) files. Default:\cr
+                     & \it\quad\TeXFontsDefault\cr
+TeXFormats\$Path& Search path for format files.  Default:\cr
+                     & \it\quad\TeXFormatsDefault\cr
+TeXPool\$Path   & Search path for {\bf initex} internal strings.  Default:\cr
+                     & \it\quad\TeXPoolDefault\cr
+TeXEdit              & Command template for switching to editor. Default:\cr
+                     & \it\quad vi +\%d \%s\cr}
+
+\shead{FILES}
+
+\smallskip\halign to\hsize{\it #\hfil\quad&#\hfil\cr
+TeXInputs:            & \TeX{}'s library area\cr
+TeXPool:tex.pool      & Encoded text of \TeX{}'s messages.\cr
+TeXFonts:texfonts.map & Filename mapping definitions.\cr
+TeXFonts:*.tfm        & Metric files for \TeX{}'s fonts.\cr
+TeXFonts:*.{\it nnn}$\{$gf,pk$\}$ & Character bitmaps for various devices.\cr
+                      & These files are not used by \TeX{}.\cr
+TeXFormats:*.fmt      & \TeX{} {\it .fmt} files.\cr
+TeXInputs:plain.tex   & The ``default'' macro package.\cr}
+
+\shead{SEE ALSO}
+{\bf mf}(1).
+\nwl
+Donald E. Knuth, {\it The \it\TeX book},
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13447-0.}
+\nwl
+Leslie Lamport, {\it \LaTeX\ --- A Document Preparation System},
+Addison-Wesley, 1985, \nwl\hbox{ISBN 0-201-15790-X.}
+\nwl
+Michael Spivak, {\it The Joy of \TeX},
+2nd edition, Addison-Wesley, 1990, \hbox{ISBN 0-8218-2997-1.}
+\nwl
+{\it TUGboat} (the journal of the \TeX{} Users Group).
+
+\shead{TRIVIA}
+
+\TeX{}, pronounced properly, rhymes with ``blecchhh.''  The proper spelling
+in typewriter-like fonts is ``TeX'' and not ``TEX'' or ``tex.''
+
+\shead{AUTHORS}
+
+\TeX{} was designed by Donald E. Knuth, who implemented it using his WEB
+system for Pascal programs. It was ported to UNIX at Stanford by Howard
+Trickey, and at Cornell by Pavel Curtis. The version now offered with the
+UNIX \TeX{} distribution is that generated by the WEB to C system ({\bf
+web2c}), originally written by Tomas Rokicki and Tim Morgan.
+
+The Archimedes version of \TeX{} (and all its friends) were derived using
+slightly modified versions of the UNIX change files. The port was done by
+Mark J. Sinke.
+
+%
+% end of input file: tex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: tftopl
+%
+\phead{TFTOPL}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+tftopl -- convert TeX font metric (tfm) files to WEB property lists
+
+\shead{SYNOPSIS}
+
+{\bf tftopl} [\,{\bf --charcode-format}{\it =format}\,] [\,{\bf --verbose}\,]
+             {\it tfm\_file\_name} [\,{\it pl\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf tftopl} program translates a (program-oriented) font metric file to
+a (human-oriented) property list file.  Thus, you can edit the contents of
+the TFM files, if the font designer has not done his or her job properly, or
+if you're encountering strange difficulties, or if you're just curious.  It
+also serves as a TFM-file validating program, i.e., if no error messages are
+given, the input file is correct.
+
+The {\it pl\_file\_name} must be complete; no adding of default extensions
+or path searching is done.  If the {\it pl\_file\_name} is not given,
+standard output is used. The {\it tfm\_file\_name} is extended with {\it
+.tfm} if it lacks a suffix.  Also, path searching is done for the {\it .tfm}
+file using the environment variable TeXFonts\$Path.  If that is not set, 
+{\bf tftopl} uses the system default:
+
+{\it\TeXFontsDefault}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{OPTIONS}
+
+The argument {\it format} to {\bf --charcode-format} specifies how character
+codes are output in the PL file.  By default, only letters and digits are
+output using the {\bf C} integer code (i.e., in ASCII); the others are
+output in octal.  (Unless the font's coding scheme starts with {\bf TeX math
+sy} or {\bf TeX math ex}, in which case all character codes are output in
+octal.)  If {\it format} is {\bf ascii}, all character codes that correspond
+to graphic characters, besides the left and right parentheses, are output in
+ASCII.  Finally, if {\it format} is {\bf octal}, all character codes are
+output in octal.
+
+Without the {\bf --verbose} option, {\bf tftopl} operates silently.  With
+it, a banner and progress report are printed on {\it stdout}.
+
+\shead{SEE ALSO}
+
+{\bf pltotf}(1).
+\nwl
+Donald E. Knuth, {\it \TeX ware}.
+\nwl
+Donald E. Knuth, {\it The \MF{}book}
+(Volume C of {\it Computers and Typesetting}),
+Addison-Wesley, 1986, \hbox{ISBN 0-201-13445-4.}
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program. It was published as part of the {\it \TeX
+ware} technical report, available from the \TeX{} Users Group. Howard
+Trickey and Pavel Curtis originally ported it to UNIX.
+
+%
+% end of input file: tftopl
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: vftovp
+%
+\phead{VFTOVP}{1}{2 January 1993}{}{}
+
+\shead{NAME}
+
+vftovp -- convert virtual font (vf) files to virtual property lists
+
+\shead{SYNOPSIS}
+
+{\bf vftovp} [\,{\bf --charcode-format}{\it =format}\,] [\,{\bf --verbose}\,]
+ {\it vf\_file\_name} {\it tfm\_file\_name} [\,{\it vpl\_file\_name}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf vftovp} program translates a (program-oriented) virtual font file
+and its accompanying \TeX{} font metric file to a (human-oriented) property
+list file. Thus, the virtual font can be edited, and its exact contents can
+be displayed mnemonically.  It also serves as a VF-file validating program;
+if no error messages are given, the input files are correct.
+
+The {\it vpl\_file\_name} must be complete; no adding of default extensions
+is done.
+
+\shead{OPTIONS}
+
+The argument {\it format} to {\bf --charcode-format} specifies how character
+codes are output in the PL file.  By default, only letters and digits are
+output using the {\bf C} integer code (i.e., in ASCII); the others are
+output in octal.  (Unless the font's coding scheme starts with {\bf TeX math
+sy} or {\bf TeX math ex}, that is, when all are output in octal.)  If {\it
+format} is {\bf ascii}, all character codes that correspond to graphic
+characters, besides the left and right parentheses, are output in ASCII.  On
+the other hand, if {\it format} is {\bf octal}, all character codes are
+output in octal.
+
+Without the {\bf --verbose} option, {\bf vftovp} operates silently.  With
+it, a banner and progress report are printed on {\it stdout}.
+
+\shead{ENVIRONMENT}
+
+{\bf vftovp} looks for {\it vf\_file\_name} using the environment variable
+VFFonts\$Path.  If that is not set, it uses the variable TeXFonts\$Path.  If
+that is not set, it uses the system defaults:
+
+\smallskip\halign to\hsize{#\hfil\quad&\it #\hfil\cr
+VFFonts\$Path  & \VFFontsDefault\cr
+TeXFonts\$Path & \TeXFontsDefault\cr}
+
+See {\bf tex}(1) for the details of the searching.
+
+\shead{SEE ALSO}
+
+{\bf pltotf}(1), {\bf tftopl}(1), {\bf vptovf}(1).
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program, based in part on an idea of David Fuchs,
+starting with the code for {\bf tftopl}(1). Karl Berry adapted it for
+compilation with {\bf web2c}.
+
+%
+% end of input file: vftovp
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: virtex
+%
+\phead{VIRTEX}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+virtex -- virgin TeX
+
+\shead{DESCRIPTION}
+
+{\bf virtex} is a version of the \TeX{} program that has no preloaded macro
+packages, but is capable of loading a special preformatted binary file,
+called a {\it format} ({\it .fmt}) file produced by the {\bf initex}(1)
+program.
+
+Preprocessing of large macro files and font definitions by {\bf initex}
+makes it possible to rapidly load complex packages, like plain \TeX{},
+\AmSTeX{}, \AmSLaTeX{}, or \LaTeX{}, without the overhead of macro parsing
+and file opening that would otherwise be experienced.
+
+{\bf virtex}
+can be invoked directly, providing it with a name
+of a format file specially prefixed by an
+ampersand:
+
+\youtype
+virtex \&plain filename
+
+This causes it to load the binary file named {\it plain.fmt} from a
+directory in the standard TeXInputs\$Path search path, and then load the
+text file {\it filename} and process it.
+
+Because this need occurs frequently, armTeX{} comes with a file {\it
+set-tex} that sets up a system of aliases. See {\bf tex}(1) for more
+details.
+
+\shead{SEE ALSO}
+
+{\bf initex}(1), {\bf tex}(1).
+
+%
+% end of input file: virtex
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: vptovf
+%
+\phead{VPTOVF}{1}{27 December 1992}{}{}
+
+\shead{NAME}
+
+vptovf -- convert virtual property lists to virtual font metrics
+
+\shead{SYNOPSIS}
+
+{\bf vptovf} [\,{\bf --verbose}\,] {\it vpl\_file\_name} {\it vfm\_file\_name}
+ {\it tfm\_file\_name}
+
+\shead{DESCRIPTION}
+
+The {\bf vptovf} program translates a (human-oriented) property list file to
+a pair of (program-oriented) files in the VF (virtual font) and TFM (\TeX{}
+font metric) formats. Thus, a virtual font file can be edited and its exact
+contents can be displayed mnemonically. New virtual fonts, which map
+characters as seen by \TeX{} into an arbitrary sequence of low-level
+typesetting operations, can also be created in this way.
+
+All three file names,  {\it vpl\_file\_name,} {\it vf\_file\_name,} and {\it
+tfm\_file\_name,} must be complete; no adding of default extensions or path
+searching is done.
+
+\shead{OPTIONS}
+
+Without the {\bf --verbose} option, {\bf vptovf} operates silently.  With
+it, a banner and progress report are printed on {\it stdout}.
+
+\shead{SEE ALSO}
+
+{\bf pltotf}(1), {\bf tftopl}(1), {\bf vftovp}(1).
+
+\shead{AUTHORS}
+
+Donald E. Knuth wrote the program, based in part on an idea of David Fuchs,
+starting with the code for {\bf pltotf}(1). Karl Berry adapted it for
+compilation with {\bf web2c}.
+
+%
+% end of input file: vptovf
+%--------------------------------------------------
+
+%--------------------------------------------------
+% start of input file: weave
+%
+\phead{WEAVE}{1}{12 February 1992}{}{}
+
+\shead{NAME}
+
+weave -- translate WEB to \TeX{}
+
+\shead{SYNOPSIS}
+
+{\bf weave} [\,{\bf --x}\,] {\it webfile[.web]} [\,{\it changefile[.ch]}\,]
+
+\shead{DESCRIPTION}
+
+The {\bf weave} program is used to create a \TeX{} file for viewing the WEB
+program. It takes appropriate care of typographic details like page layout
+and the use of indentation, italics, boldface, etc., and it supplies
+extensive cross-index information that it gathers automatically. The command
+line arguments are the same as for {\bf tangle} except for the option: {\bf
+--x} says to omit the index, module name list, and table of contents pages.
+(A {\it CONTENTS.tex} file will still be written when the \TeX{} file is
+processed, however, unless some macros in {\it webmac.tex} are redefined.)
+
+The output \TeX{} file name is formed by adding {\it .tex} to the root of
+the WEB file name.
+
+There are several macros that probably should be redefined by the programmer
+at the beginning of the WEB file. It is a good idea to set \bs title to the
+name of the program. And, to cause output of only changed modules, one can
+say \bs let\bs maybe=\bs iffalse (usually as the first change in the change
+file).
+
+\shead{FILES}
+
+{\it TeXInputs:webmac.tex}\quad \TeX{} macros used by {\bf weave} output.
+
+\shead{SEE ALSO}
+
+{\bf tangle}(1) for references, authors, and other information about WEB.
+
+%
+% end of input file: weave
+%--------------------------------------------------
+\bye

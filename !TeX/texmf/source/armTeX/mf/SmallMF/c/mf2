@@ -1,0 +1,524 @@
+#define EXTERN extern
+#include "mfd.h"
+
+void getboolean ( ) 
+{getxnext () ; 
+  scanexpression () ; 
+  if ( curtype != 2 ) 
+  {
+    disperr ( 0 , 829 ) ; 
+    {
+      helpptr = 2 ; 
+      helpline [ 1 ] = 830 ; 
+      helpline [ 0 ] = 831 ; 
+    } 
+    putgetflusherror ( 31 ) ; 
+    curtype = 2 ; 
+  } 
+} 
+void printcapsule ( ) 
+{printchar ( 40 ) ; 
+  printexp ( gpointer , 0 ) ; 
+  printchar ( 41 ) ; 
+} 
+void tokenrecycle ( ) 
+{recyclevalue ( gpointer ) ; 
+} 
+void closefilesandterminate ( ) 
+{integer k  ; 
+  integer lh  ; 
+  integer lkoffset  ; 
+  halfword p  ; 
+  scaled x  ; 
+	;
+#ifdef STAT
+  if ( internal [ 12 ] > 0 ) 
+  if ( logopened ) 
+  {
+    fprintf( logfile , "%c\n",  ' ' ) ; 
+    fprintf( logfile , "%s%s\n",  "Here is how much of METAFONT's memory" , " you used:"     ) ; 
+    fprintf( logfile , "%c%ld%s",  ' ' , (long)maxstrptr - initstrptr , " string" ) ; 
+    if ( maxstrptr != initstrptr + 1 ) 
+    putc ( 's' ,  logfile );
+    fprintf( logfile , "%s%ld\n",  " out of " , (long)maxstrings - initstrptr ) ; 
+    fprintf( logfile , "%c%ld%s%ld\n",  ' ' , (long)maxpoolptr - initpoolptr ,     " string characters out of " , (long)poolsize - initpoolptr ) ; 
+    fprintf( logfile , "%c%ld%s%ld\n",  ' ' , (long)lomemmax + 0 + memend - himemmin + 2 ,     " words of memory out of " , (long)memend + 1 ) ; 
+    fprintf( logfile , "%c%ld%s%ld\n",  ' ' , (long)stcount , " symbolic tokens out of " , (long)2100 ) ; 
+    fprintf( logfile , "%c%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%c\n",  ' ' , (long)maxinstack , "i," , (long)intptr , "n," ,     (long)maxroundingptr , "r," , (long)maxparamstack , "p," , (long)maxbufstack + 1 ,     "b stack positions out of " , (long)stacksize , "i," , (long)maxinternal , "n," ,     (long)maxwiggle , "r," , (long)150 , "p," , (long)bufsize , 'b' ) ; 
+  } 
+#endif /* STAT */
+  if ( ( gfprevptr > 0 ) || ( internal [ 33 ] > 0 ) ) 
+  {
+    rover = 23 ; 
+    mem [ rover ] .hhfield .v.RH = 65535L ; 
+    lomemmax = himemmin - 1 ; 
+    if ( lomemmax - rover > 65535L ) 
+    lomemmax = 65535L + rover ; 
+    mem [ rover ] .hhfield .lhfield = lomemmax - rover ; 
+    mem [ rover + 1 ] .hhfield .lhfield = rover ; 
+    mem [ rover + 1 ] .hhfield .v.RH = rover ; 
+    mem [ lomemmax ] .hhfield .v.RH = 0 ; 
+    mem [ lomemmax ] .hhfield .lhfield = 0 ; 
+    mem [ memtop - 1 ] .hhfield .v.RH = 19 ; 
+    {register integer for_end; k = bc ; for_end = ec ; if ( k <= for_end) do 
+      if ( charexists [ k ] ) 
+      tfmwidth [ k ] = sortin ( tfmwidth [ k ] ) ; 
+    while ( k++ < for_end ) ; } 
+    nw = skimp ( 255 ) + 1 ; 
+    dimenhead [ 1 ] = mem [ memtop - 1 ] .hhfield .v.RH ; 
+    if ( perturbation >= 4096 ) 
+    tfmwarning ( 20 ) ; 
+    fixdesignsize () ; 
+    fixchecksum () ; 
+    if ( internal [ 33 ] > 0 ) 
+    {
+      mem [ memtop - 1 ] .hhfield .v.RH = 19 ; 
+      {register integer for_end; k = bc ; for_end = ec ; if ( k <= for_end) 
+      do 
+	if ( charexists [ k ] ) 
+	if ( tfmheight [ k ] == 0 ) 
+	tfmheight [ k ] = 15 ; 
+	else tfmheight [ k ] = sortin ( tfmheight [ k ] ) ; 
+      while ( k++ < for_end ) ; } 
+      nh = skimp ( 15 ) + 1 ; 
+      dimenhead [ 2 ] = mem [ memtop - 1 ] .hhfield .v.RH ; 
+      if ( perturbation >= 4096 ) 
+      tfmwarning ( 21 ) ; 
+      mem [ memtop - 1 ] .hhfield .v.RH = 19 ; 
+      {register integer for_end; k = bc ; for_end = ec ; if ( k <= for_end) 
+      do 
+	if ( charexists [ k ] ) 
+	if ( tfmdepth [ k ] == 0 ) 
+	tfmdepth [ k ] = 15 ; 
+	else tfmdepth [ k ] = sortin ( tfmdepth [ k ] ) ; 
+      while ( k++ < for_end ) ; } 
+      nd = skimp ( 15 ) + 1 ; 
+      dimenhead [ 3 ] = mem [ memtop - 1 ] .hhfield .v.RH ; 
+      if ( perturbation >= 4096 ) 
+      tfmwarning ( 22 ) ; 
+      mem [ memtop - 1 ] .hhfield .v.RH = 19 ; 
+      {register integer for_end; k = bc ; for_end = ec ; if ( k <= for_end) 
+      do 
+	if ( charexists [ k ] ) 
+	if ( tfmitalcorr [ k ] == 0 ) 
+	tfmitalcorr [ k ] = 15 ; 
+	else tfmitalcorr [ k ] = sortin ( tfmitalcorr [ k ] ) ; 
+      while ( k++ < for_end ) ; } 
+      ni = skimp ( 63 ) + 1 ; 
+      dimenhead [ 4 ] = mem [ memtop - 1 ] .hhfield .v.RH ; 
+      if ( perturbation >= 4096 ) 
+      tfmwarning ( 23 ) ; 
+      internal [ 33 ] = 0 ; 
+      if ( jobname == 0 ) 
+      openlogfile () ; 
+      packjobname ( 1042 ) ; 
+      riscostype = riscostfmtype ; 
+      while ( ! bopenout ( tfmfile ) ) promptfilename ( 1043 , 1042 ) ; 
+      metricfilename = bmakenamestring ( tfmfile ) ; 
+      k = headersize ; 
+      while ( headerbyte [ k ] < 0 ) decr ( k ) ; 
+      lh = ( k + 3 ) / 4 ; 
+      if ( bc > ec ) 
+      bc = 1 ; 
+      bchar = roundunscaled ( internal [ 41 ] ) ; 
+      if ( ( bchar < 0 ) || ( bchar > 255 ) ) 
+      {
+	bchar = -1 ; 
+	lkstarted = false ; 
+	lkoffset = 0 ; 
+      } 
+      else {
+	  
+	lkstarted = true ; 
+	lkoffset = 1 ; 
+      } 
+      k = labelptr ; 
+      if ( labelloc [ k ] + lkoffset > 255 ) 
+      {
+	lkoffset = 0 ; 
+	lkstarted = false ; 
+	do {
+	    charremainder [ labelchar [ k ] ] = lkoffset ; 
+	  while ( labelloc [ k - 1 ] == labelloc [ k ] ) {
+	      
+	    decr ( k ) ; 
+	    charremainder [ labelchar [ k ] ] = lkoffset ; 
+	  } 
+	  incr ( lkoffset ) ; 
+	  decr ( k ) ; 
+	} while ( ! ( lkoffset + labelloc [ k ] < 256 ) ) ; 
+      } 
+      if ( lkoffset > 0 ) 
+      while ( k > 0 ) {
+	  
+	charremainder [ labelchar [ k ] ] = charremainder [ labelchar [ k ] ] 
+	+ lkoffset ; 
+	decr ( k ) ; 
+      } 
+      if ( bchlabel < ligtablesize ) 
+      {
+	ligkern [ nl ] .b0 = 255 ; 
+	ligkern [ nl ] .b1 = 0 ; 
+	ligkern [ nl ] .b2 = ( ( bchlabel + lkoffset ) / 256 ) ; 
+	ligkern [ nl ] .b3 = ( ( bchlabel + lkoffset ) % 256 ) ; 
+	incr ( nl ) ; 
+      } 
+      bwrite2bytes ( tfmfile , 6 + lh + ( ec - bc + 1 ) + nw + nh + nd + ni + 
+      nl + lkoffset + nk + ne + np ) ; 
+      bwrite2bytes ( tfmfile , lh ) ; 
+      bwrite2bytes ( tfmfile , bc ) ; 
+      bwrite2bytes ( tfmfile , ec ) ; 
+      bwrite2bytes ( tfmfile , nw ) ; 
+      bwrite2bytes ( tfmfile , nh ) ; 
+      bwrite2bytes ( tfmfile , nd ) ; 
+      bwrite2bytes ( tfmfile , ni ) ; 
+      bwrite2bytes ( tfmfile , nl + lkoffset ) ; 
+      bwrite2bytes ( tfmfile , nk ) ; 
+      bwrite2bytes ( tfmfile , ne ) ; 
+      bwrite2bytes ( tfmfile , np ) ; 
+      {register integer for_end; k = 1 ; for_end = 4 * lh ; if ( k <= 
+      for_end) do 
+	{
+	  if ( headerbyte [ k ] < 0 ) 
+	  headerbyte [ k ] = 0 ; 
+	  bwritebyte ( tfmfile , headerbyte [ k ] ) ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = bc ; for_end = ec ; if ( k <= for_end) 
+      do 
+	if ( ! charexists [ k ] ) 
+	bwrite4bytes ( tfmfile , 0 ) ; 
+	else {
+	    
+	  bwritebyte ( tfmfile , mem [ tfmwidth [ k ] ] .hhfield .lhfield ) ; 
+	  bwritebyte ( tfmfile , ( mem [ tfmheight [ k ] ] .hhfield .lhfield ) 
+	  * 16 + mem [ tfmdepth [ k ] ] .hhfield .lhfield ) ; 
+	  bwritebyte ( tfmfile , ( mem [ tfmitalcorr [ k ] ] .hhfield .lhfield 
+	  ) * 4 + chartag [ k ] ) ; 
+	  bwritebyte ( tfmfile , charremainder [ k ] ) ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      tfmchanged = 0 ; 
+      {register integer for_end; k = 1 ; for_end = 4 ; if ( k <= for_end) do 
+	{
+	  bwrite4bytes ( tfmfile , 0 ) ; 
+	  p = dimenhead [ k ] ; 
+	  while ( p != 19 ) {
+	      
+	    bwrite4bytes ( tfmfile , dimenout ( mem [ p + 1 ] .cint ) ) ; 
+	    p = mem [ p ] .hhfield .v.RH ; 
+	  } 
+	} 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = 0 ; for_end = 255 ; if ( k <= for_end) 
+      do 
+	if ( skiptable [ k ] < ligtablesize ) 
+	{
+	  printnl ( 1045 ) ; 
+	  printint ( k ) ; 
+	  print ( 1046 ) ; 
+	  ll = skiptable [ k ] ; 
+	  do {
+	      lll = ligkern [ ll ] .b0 ; 
+	    ligkern [ ll ] .b0 = 128 ; 
+	    ll = ll - lll ; 
+	  } while ( ! ( lll == 0 ) ) ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      if ( lkstarted ) 
+      {
+	bwritebyte ( tfmfile , 255 ) ; 
+	bwritebyte ( tfmfile , bchar ) ; 
+	bwrite2bytes ( tfmfile , 0 ) ; 
+      } 
+      else {
+	  register integer for_end; k = 1 ; for_end = lkoffset ; if ( k <= 
+      for_end) do 
+	{
+	  ll = labelloc [ labelptr ] ; 
+	  if ( bchar < 0 ) 
+	  {
+	    bwritebyte ( tfmfile , 254 ) ; 
+	    bwritebyte ( tfmfile , 0 ) ; 
+	  } 
+	  else {
+	      
+	    bwritebyte ( tfmfile , 255 ) ; 
+	    bwritebyte ( tfmfile , bchar ) ; 
+	  } 
+	  bwrite2bytes ( tfmfile , ll + lkoffset ) ; 
+	  do {
+	      decr ( labelptr ) ; 
+	  } while ( ! ( labelloc [ labelptr ] < ll ) ) ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = 0 ; for_end = nl - 1 ; if ( k <= 
+      for_end) do 
+	tfmqqqq ( ligkern [ k ] ) ; 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = 0 ; for_end = nk - 1 ; if ( k <= 
+      for_end) do 
+	bwrite4bytes ( tfmfile , dimenout ( kern [ k ] ) ) ; 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = 0 ; for_end = ne - 1 ; if ( k <= 
+      for_end) do 
+	tfmqqqq ( exten [ k ] ) ; 
+      while ( k++ < for_end ) ; } 
+      {register integer for_end; k = 1 ; for_end = np ; if ( k <= for_end) do 
+	if ( k == 1 ) 
+	if ( abs ( param [ 1 ] ) < 134217728L ) 
+	bwrite4bytes ( tfmfile , param [ 1 ] * 16 ) ; 
+	else {
+	    
+	  incr ( tfmchanged ) ; 
+	  if ( param [ 1 ] > 0 ) 
+	  bwrite4bytes ( tfmfile , 2147483647L ) ; 
+	  else bwrite4bytes ( tfmfile , -2147483647L ) ; 
+	} 
+	else bwrite4bytes ( tfmfile , dimenout ( param [ k ] ) ) ; 
+      while ( k++ < for_end ) ; } 
+      if ( tfmchanged > 0 ) 
+      {
+	if ( tfmchanged == 1 ) 
+	printnl ( 1047 ) ; 
+	else {
+	    
+	  printnl ( 40 ) ; 
+	  printint ( tfmchanged ) ; 
+	  print ( 1048 ) ; 
+	} 
+	print ( 1049 ) ; 
+      } 
+	;
+#ifdef STAT
+      if ( internal [ 12 ] > 0 ) 
+      {
+	fprintf( logfile , "%c\n",  ' ' ) ; 
+	if ( bchlabel < ligtablesize ) 
+	decr ( nl ) ; 
+	fprintf( logfile , "%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s%ld%s\n",  "(You used " , (long)nw , "w," , (long)nh , "h," , (long)nd , "d," ,         (long)ni , "i," , (long)nl , "l," , (long)nk , "k," , (long)ne , "e," , (long)np ,         "p metric file positions" ) ; 
+	fprintf( logfile , "%s%s%ld%s%ld%s%ld%s\n",  "  out of " , "256w,16h,16d,64i," , (long)ligtablesize ,         "l," , (long)maxkerns , "k,256e," , (long)maxfontdimen , "p)" ) ; 
+      } 
+#endif /* STAT */
+      printnl ( 1044 ) ; 
+      slowprint ( metricfilename ) ; 
+      printchar ( 46 ) ; 
+      bclose ( tfmfile ) ; 
+    } 
+    if ( gfprevptr > 0 ) 
+    {
+      {
+	gfbuf [ gfptr ] = 248 ; 
+	incr ( gfptr ) ; 
+	if ( gfptr == gflimit ) 
+	gfswap () ; 
+      } 
+      gffour ( gfprevptr ) ; 
+      gfprevptr = gfoffset + gfptr - 5 ; 
+      gffour ( internal [ 26 ] * 16 ) ; 
+      {register integer for_end; k = 1 ; for_end = 4 ; if ( k <= for_end) do 
+	{
+	  gfbuf [ gfptr ] = headerbyte [ k ] ; 
+	  incr ( gfptr ) ; 
+	  if ( gfptr == gflimit ) 
+	  gfswap () ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      gffour ( internal [ 27 ] ) ; 
+      gffour ( internal [ 28 ] ) ; 
+      gffour ( gfminm ) ; 
+      gffour ( gfmaxm ) ; 
+      gffour ( gfminn ) ; 
+      gffour ( gfmaxn ) ; 
+      {register integer for_end; k = 0 ; for_end = 255 ; if ( k <= for_end) 
+      do 
+	if ( charexists [ k ] ) 
+	{
+	  x = gfdx [ k ] / 65536L ; 
+	  if ( ( gfdy [ k ] == 0 ) && ( x >= 0 ) && ( x < 256 ) && ( gfdx [ k 
+	  ] == x * 65536L ) ) 
+	  {
+	    {
+	      gfbuf [ gfptr ] = 246 ; 
+	      incr ( gfptr ) ; 
+	      if ( gfptr == gflimit ) 
+	      gfswap () ; 
+	    } 
+	    {
+	      gfbuf [ gfptr ] = k ; 
+	      incr ( gfptr ) ; 
+	      if ( gfptr == gflimit ) 
+	      gfswap () ; 
+	    } 
+	    {
+	      gfbuf [ gfptr ] = x ; 
+	      incr ( gfptr ) ; 
+	      if ( gfptr == gflimit ) 
+	      gfswap () ; 
+	    } 
+	  } 
+	  else {
+	      
+	    {
+	      gfbuf [ gfptr ] = 245 ; 
+	      incr ( gfptr ) ; 
+	      if ( gfptr == gflimit ) 
+	      gfswap () ; 
+	    } 
+	    {
+	      gfbuf [ gfptr ] = k ; 
+	      incr ( gfptr ) ; 
+	      if ( gfptr == gflimit ) 
+	      gfswap () ; 
+	    } 
+	    gffour ( gfdx [ k ] ) ; 
+	    gffour ( gfdy [ k ] ) ; 
+	  } 
+	  x = mem [ tfmwidth [ k ] + 1 ] .cint ; 
+	  if ( abs ( x ) > maxtfmdimen ) 
+	  if ( x > 0 ) 
+	  x = 16777215L ; 
+	  else x = -16777215L ; 
+	  else x = makescaled ( x * 16 , internal [ 26 ] ) ; 
+	  gffour ( x ) ; 
+	  gffour ( charptr [ k ] ) ; 
+	} 
+      while ( k++ < for_end ) ; } 
+      {
+	gfbuf [ gfptr ] = 249 ; 
+	incr ( gfptr ) ; 
+	if ( gfptr == gflimit ) 
+	gfswap () ; 
+      } 
+      gffour ( gfprevptr ) ; 
+      {
+	gfbuf [ gfptr ] = 131 ; 
+	incr ( gfptr ) ; 
+	if ( gfptr == gflimit ) 
+	gfswap () ; 
+      } 
+      k = 4 + ( ( gfbufsize - gfptr ) % 4 ) ; 
+      while ( k > 0 ) {
+	  
+	{
+	  gfbuf [ gfptr ] = 223 ; 
+	  incr ( gfptr ) ; 
+	  if ( gfptr == gflimit ) 
+	  gfswap () ; 
+	} 
+	decr ( k ) ; 
+      } 
+      if ( gflimit == halfbuf ) 
+      writegf ( halfbuf , gfbufsize - 1 ) ; 
+      if ( gfptr > 0 ) 
+      writegf ( 0 , gfptr - 1 ) ; 
+      printnl ( 1060 ) ; 
+      slowprint ( outputfilename ) ; 
+      print ( 557 ) ; 
+      printint ( totalchars ) ; 
+      print ( 1061 ) ; 
+      if ( totalchars != 1 ) 
+      printchar ( 115 ) ; 
+      print ( 1062 ) ; 
+      printint ( gfoffset + gfptr ) ; 
+      print ( 1063 ) ; 
+      bclose ( gffile ) ; 
+    } 
+  } 
+  if ( logopened ) 
+  {
+    putc ('\n',  logfile );
+    aclose ( logfile ) ; 
+    selector = selector - 2 ; 
+    if ( selector == 1 ) 
+    {
+      printnl ( 1071 ) ; 
+      slowprint ( texmflogname ) ; 
+      printchar ( 46 ) ; 
+    } 
+  } 
+  println () ; 
+  if ( ( editnamestart != 0 ) && ( interaction > 0 ) ) 
+  calledit ( strpool , editnamestart , editnamelength , editline ) ; 
+} 
+#ifdef DEBUG
+void debughelp ( ) 
+{/* 888 10 */ integer k, l, m, n  ; 
+  while ( true ) {
+      
+    ; 
+    printnl ( 1078 ) ; 
+    flush ( stdout ) ; 
+    read ( stdin , m ) ; 
+    if ( m < 0 ) 
+    goto lab10 ; 
+    else if ( m == 0 ) 
+    {
+      goto lab888 ; 
+      lab888: m = 0 ; 
+    } 
+    else {
+	
+      read ( stdin , n ) ; 
+      switch ( m ) 
+      {case 1 : 
+	printword ( mem [ n ] ) ; 
+	break ; 
+      case 2 : 
+	printint ( mem [ n ] .hhfield .lhfield ) ; 
+	break ; 
+      case 3 : 
+	printint ( mem [ n ] .hhfield .v.RH ) ; 
+	break ; 
+      case 4 : 
+	{
+	  printint ( eqtb [ n ] .lhfield ) ; 
+	  printchar ( 58 ) ; 
+	  printint ( eqtb [ n ] .v.RH ) ; 
+	} 
+	break ; 
+      case 5 : 
+	printvariablename ( n ) ; 
+	break ; 
+      case 6 : 
+	printint ( internal [ n ] ) ; 
+	break ; 
+      case 7 : 
+	doshowdependencies () ; 
+	break ; 
+      case 9 : 
+	showtokenlist ( n , 0 , 100000L , 0 ) ; 
+	break ; 
+      case 10 : 
+	slowprint ( n ) ; 
+	break ; 
+      case 11 : 
+	checkmem ( n > 0 ) ; 
+	break ; 
+      case 12 : 
+	searchmem ( n ) ; 
+	break ; 
+      case 13 : 
+	{
+	  read ( stdin , l ) ; 
+	  printcmdmod ( n , l ) ; 
+	} 
+	break ; 
+      case 14 : 
+	{register integer for_end; k = 0 ; for_end = n ; if ( k <= for_end) 
+	do 
+	  print ( buffer [ k ] ) ; 
+	while ( k++ < for_end ) ; } 
+	break ; 
+      case 15 : 
+	panicking = ! panicking ; 
+	break ; 
+	default: 
+	print ( 63 ) ; 
+	break ; 
+      } 
+    } 
+  } 
+  lab10: ; 
+} 
+#endif /* DEBUG */

@@ -1,0 +1,583 @@
+/*
+ * pathsrch.c: look for files based on paths, i.e., colon-separated
+ * lists of directories.
+ *
+ * Perhaps we should allow % specifiers in the paths for the resolution,
+ * etc.
+ *
+ * This is a RISC OS ONLY version! Things not needed in RISC OS are cut
+ * out
+ *
+ * Copyright (C) 1992 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include "config.h"
+
+#include "c-pathch.h"
+#include "c-namemx.h"
+#include "c-pathmx.h"
+#include "paths.h"
+#include "c-ctype.h"
+#include "riscos_ex.h"
+#include "pathsrch.h"
+
+#include "oslib/fileswitch.h"
+#include "oslib/osgbpb.h"
+
+static void add_directory P3H (string **, unsigned *, string);
+static int expand_subdir P3H (string **, unsigned *, string);
+static void expand_pseudo_dir P4H (string **, unsigned *, string, int);
+static string readable P1H (string);
+#if 0
+static string *find_dir_list P1H (string);
+static void save_dir_list P2H (string, string *);
+#endif
+boolean riscos_readaccess P1H (string);
+
+/* This special value is inserted in the dirlist to indicate
+   points which the dirnames cannot cross when shuffled */
+static const string special_dir_marker = "$$marker$$";
+
+/*
+ * If FILENAME is absolute or explicitly relative (i.e., starts with
+ * `@.', or `^.' or there's a ':', '&', '\' or '$' in it), or if
+ * DIR_LIST is null, we return whether FILENAME is readable as-is.
+ * Otherwise, we test if FILENAME is in any of the directories listed
+ * in DIR_LIST.  (The last entry of DIR_LIST must be null.)  We
+ * return the complete path if found, NULL else.
+ *
+ * In the interests of doing minimal work here, we assume that each
+ * element of DIR_LIST already ends with a `.'.
+ *
+ * DIR_LIST is most conveniently made by calling `initialize_path_list'.
+ * This is a separate routine because we allow recursive searching,
+ * and it may take some time to discover the list of directories.  We
+ * do not want to incur that overhead every time we want to look for
+ * a file.
+ *
+ * (Actually, `.' is not hardwired into this routine; we use PATH_SEP,
+ * defined above.)
+ */
+
+string
+find_path_filename P2C (string, filename, string *, dir_list)
+{
+  string found_name = NULL;
+  string *dir_list_top = dir_list;
+
+  /*
+   * If FILENAME is absolute or explicitly relative, or if DIR_LIST
+   * is null, only check if FILENAME is readable.
+   */
+  if (riscos_absolute (filename) || dir_list == NULL)
+    found_name = readable (filename);
+  else
+    {				/* Test if FILENAME is in any of the *
+				   directories in DIR_LIST.  */
+      string save_filename = filename;
+
+      while (*dir_list != NULL)
+	{
+	  filename = concat (*dir_list, save_filename);
+
+	  found_name = readable (filename);
+	  if (found_name == NULL)
+	    {
+	      free (filename);
+	      if (*++dir_list == special_dir_marker)
+		do
+		  dir_list_top = ++dir_list;
+		while (*dir_list == special_dir_marker);
+	    }
+	  else
+	    {
+	      string save_dir;
+	      /* Move the directory to the top of the list */
+	      save_dir = *dir_list;
+	      memmove (dir_list_top + 1, dir_list_top,
+		       (dir_list - dir_list_top) * sizeof (string));
+	      *dir_list_top = save_dir;
+
+	      if (found_name != filename)
+		free (filename);
+	      break;
+	    }
+	}
+    }
+
+  return found_name;
+}
+
+
+/*
+ * If NAME is readable, return it.  If the error is ENAMETOOLONG,
+ * truncate any too-long path components and return the result
+ * (unless there were no too-long components, i.e., a overall
+ * too-long name caused the error, in which case return NULL).  On
+ * any other error, return NULL.
+ *
+ * POSIX invented this brain-damage of not necessarily truncating
+ * pathname components; the system's behavior is defined by the value
+ * of the symbol _POSIX_NO_TRUNC, but you can't change it
+ * dynamically!
+ *
+ * RISC OS does things a bit differently. We need some kernel routines
+ * for testing read access, and we don't truncate filenames, as
+ * different filing systems might allow different filename lengths.
+ */
+
+static string
+readable (string name)
+{
+  string newname;
+
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "readable(\"%s\")\n", name);
+#endif
+  newname = riscos_translate (name, 0);
+#ifdef RISCOS_DEBUG
+  if (newname)
+    fprintf (stderr, " yes --> \"%s\"\n", newname);
+#endif
+  return newname;
+}
+
+/* OS_File 17: prm p.836 or c.riscos_ex */
+
+/* Return true if name is a file with owner or world read access */
+boolean
+riscos_readaccess (string name)
+{
+  int obj_type;
+  fileswitch_attr attr;
+
+  if (NULL == xosfile_read_stamped (name,
+				  &obj_type, NULL, NULL, NULL, &attr, NULL))
+    return (obj_type == 1) && (attr & 0x11);
+  else
+    return false;
+}
+
+
+/*
+ * Return a NULL-terminated array of directory names, each name
+ * ending with PATH_SEP, created by parsing the
+ * PATH_DELIMITER-separated list in the value of the environment
+ * variable ENV_NAME, or DEFAULT_PATH if the envvar is not set.
+ *
+ * A leading or trailing colon in the value of ENV_NAME is replaced by
+ * DEFAULT_PATH.
+ *
+ * Any element of the path that ends with double PATH_SEP characters
+ * (e.g., `foo..') is replaced by all its subdirectories.
+ *
+ * If ENV_NAME is null, only parse DEFAULT_PATH.  If both are null, do
+ * nothing and return NULL.
+ *
+ * Under RISC OS all paths have "$Path" appended.
+ */
+
+string *
+initialize_path_list (string env_name, string default_path)
+{
+  string dir, path;
+  string *dir_list = NULL;
+  unsigned dir_count = 0;
+  string env_value = NULL;
+  string orig_path;
+
+  if (env_name)
+    {
+      string path_name;
+      path_name = concat (env_name, "$Path");
+      env_value = getenv (path_name);
+      free (path_name);
+    }
+  orig_path = expand_default (env_value, default_path);
+
+  if (orig_path == NULL || *orig_path == 0)
+    return NULL;
+
+  /*
+   * If we've already seen this colon-separated list, then just get
+   * it back instead of going back to the filesystem.
+   */
+#if 0
+  dir_list = find_dir_list (orig_path);
+  if (dir_list != NULL)
+    return dir_list;
+#endif
+
+  if (*orig_path == PATH_DELIMITER)
+    add_directory (&dir_list, &dir_count, "@.");
+
+  path = concat (PATH_DELIMITER_STRING, orig_path);
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "Parsing \"%s\"\n", path);
+#endif
+
+  /* Find each element in the path in turn.  */
+  for (dir = strtok (path, PATH_DELIMITER_STRING); dir != NULL;
+       dir = strtok (NULL, PATH_DELIMITER_STRING))
+    {
+      int len;
+
+      len = strlen (dir);
+
+      /* If `dir' is the empty string, skip it.  */
+      if (len == 0)
+	continue;
+
+      /* One of these for each comma */
+      if (dir_count > 0)
+	add_directory (&dir_list, &dir_count, special_dir_marker);
+
+      /*
+       * If `dir' ends in double dots, do subdirectories (and remove
+       * the second dot, so the final pathnames we return don't look
+       * like foo..bar.).  Because we obviously want to do
+       * subdirectories of `dir', we don't check if it is a leaf.  This
+       * means that if `dir' is `foo..', and `foo' contains only
+       * symlinks (so our leaf test below would be true), the symlinks
+       * are chased.
+       */
+      if (len > 2 && dir[len - 1] == PATH_SEP && dir[len - 2] == PATH_SEP)
+	{
+	  dir[len - 1] = 0;
+	  if (riscos_isdir (dir))
+	    {
+	      /* expand pseudo filing systems also */
+	      expand_pseudo_dir (&dir_list, &dir_count, dir, 0);
+	    }
+	}
+      else
+	{			/* Don't bother to add the directory * if it
+				   doesn't exist.  */
+	  if (riscos_isdir (dir))
+	    add_directory (&dir_list, &dir_count, dir);
+	}
+    }
+
+  /* Add the terminating null entry to `dir_list'.  */
+  dir_count++;
+  XRETALLOC (dir_list, dir_count, string);
+  dir_list[dir_count - 1] = NULL;
+
+#if 0
+  /* Save the directory list we just found.  */
+  save_dir_list (orig_path, dir_list);
+#endif
+
+#ifdef RISCOS_DEBUG
+  {
+    int i = 0;
+    fputs ("These are the cached directories:\n", stderr);
+    while (dir_list[i])
+      fprintf (stderr, "  \"%s\"\n", dir_list[i++]);
+  }
+#endif
+
+  return dir_list;
+}
+
+
+/* Subroutines for `initialize_path_list'.  */
+
+/*
+ * Add a newly-allocated copy of DIR to the end of the array pointed
+ * to by DIR_LIST_PTR. Increment DIR_COUNT_PTR. UNIX:  Append a `/'
+ * to DIR if necessary. We assume DIR is a directory, to avoid
+ * unnecessary an unnecessary call to `stat'.
+ */
+
+static void
+add_directory (dir_list_ptr, dir_count_ptr, dir)
+     string **dir_list_ptr;
+     unsigned *dir_count_ptr;
+     string dir;
+{
+  /* Add `dir' to the list of the directories.  */
+  (*dir_count_ptr)++;
+  XRETALLOC (*dir_list_ptr, *dir_count_ptr, string);
+  (*dir_list_ptr)[*dir_count_ptr - 1] = dir;
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "  adding subdir \"%s\"\n", dir);
+#endif
+}
+
+
+/*
+ * Add DIRNAME to DIR_LIST and look for subdirectories, recursively.
+ * We assume DIRNAME is the name of a directory.
+ */
+
+/* RISC OS version (does full recursive search) */
+
+/* The size of the buffer passes to OS_GBPB */
+#define osgbpb_bufsize 64
+
+static int
+expand_subdir (dir_list_ptr, dir_count_ptr, dirname)
+     string **dir_list_ptr;
+     unsigned *dir_count_ptr;
+     string dirname;
+{
+  osgbpb_info gbpb_buffer[osgbpb_bufsize];
+  int context, count;
+  int good_dir = 0;		/* Set to 1 if dir has subdirs or * files
+				   with '/' */
+  char potential[PATH_MAX];
+  unsigned length;
+
+  /* Compute the length of DIRNAME, since it's loop-invariant.  */
+  length = strlen (dirname);
+
+  /* Construct the part of the pathname that doesn't change. */
+  strcpy (potential, dirname);
+  if (potential[length - 1] == PATH_SEP)
+    potential[--length] = 0;
+
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "expanding subdir \"%s\"\n", potential);
+#endif
+
+  /*
+   * If this directory contains a file named !NoExpand then we don't
+   * scan subdirs
+   */
+  strcpy (potential + length, ".!NoExpand");
+  if (riscos_readaccess (potential))
+    {
+#ifdef RISCOS_DEBUG
+      fprintf (stderr, "stop, met \"%s\"\n", potential);
+#endif
+      return 1;			/* pretend it's a good dir */
+    }
+  potential[length] = '\0';	/* remove leafname */
+
+  /* prepare OS_GBPB calls */
+  context = 0;
+  do
+    {
+      osgbpb_info *object;
+      char *newfound;
+
+      if (NULL != xosgbpb_dir_entries_info (potential,
+			   (osgbpb_info_list *) gbpb_buffer, osgbpb_bufsize,
+					context, sizeof (gbpb_buffer), NULL,
+					    &count, &context))
+	break;			/* some error in OS_GBPB */
+
+      object = gbpb_buffer;
+      while (count > 0)
+	{
+	  switch (object->obj_type)
+	    {
+	    case 1:		/* This is a file */
+	      if (!good_dir && strchr (object->name, '/') != NULL)
+		good_dir = 1;	/* file with '/' ext */
+	      break;
+	    case 2:		/* This is a directory */
+	    case 3:		/* This is an image file */
+	      good_dir = 1;	/* sub-dir found */
+	      newfound = xmalloc (length + strlen (object->name) + 3);
+	      strcpy (newfound, potential);
+	      strcpy (newfound + length, ".");
+	      strcat (newfound + length, object->name);
+	      strcat (newfound + length, ".");
+	      /* Now we recursively expand and add if its good */
+	      if (expand_subdir (dir_list_ptr, dir_count_ptr, newfound))
+		add_directory (dir_list_ptr, dir_count_ptr, newfound);
+	      else
+		free (newfound);
+	      break;
+	    }
+	  /* Find the next element in the buffer. */
+	  count--;
+	  object = (osgbpb_info *) ((char *) (object + 1)
+				    + (strlen (object->name) & ~3));
+	}
+    }
+  while (context != -1);
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "end of subdir(%d) \"%s\"\n", good_dir, potential);
+#endif
+  return good_dir;
+}
+
+/* Expand pseudo-filing systems that uses path variables. We need to do this to ensure that we get all subdirectories */
+
+/* Add all the subdirectories of dirname to dir_list after expanding pseudo-filing systems. */
+
+static void
+expand_pseudo_dir (string ** dir_list_ptr, unsigned *dir_count_ptr,
+		   string dirname, int recursion_level)
+{
+  string col_pos;
+  string path_value;
+  string prefix;
+  size_t prefix_size, postfix_size;
+  string new_dir_name;
+
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "expand_pseudo(%d)(\"%s\")\n", recursion_level, dirname);
+#endif
+  col_pos = strchr (dirname, ':');
+  if (col_pos != NULL)
+    {
+      string path_var_name;
+
+      path_var_name = xmalloc (col_pos - dirname + 6);
+      strncpy (path_var_name, dirname, col_pos - dirname);
+      strcpy (path_var_name + (col_pos - dirname), "$Path");
+      path_value = getenv (path_var_name);
+#ifdef RISCOS_DEBUG
+      fprintf (stderr, "Looking for <%s>\n", path_var_name);
+#endif
+      free (path_var_name);
+    }
+  /* The test for recursion_level is to avoid infinite recursion when
+     somebody stupidly says "Set Texinputs$Path texinputs:" */
+  if (col_pos == NULL || path_value == NULL || recursion_level > 10)
+    {
+      if (expand_subdir (dir_list_ptr, dir_count_ptr, dirname))
+	add_directory (dir_list_ptr, dir_count_ptr, dirname);
+      else if (recursion_level > 0)
+	free (dirname);		/* only free from recursive calls */
+      return;			/* not more to do */
+    }
+  /* we cannot trust the string returned by getenv() to remain valid */
+  path_value = prefix = xstrdup (path_value);
+  postfix_size = strlen (col_pos + 1);
+#ifdef RISCOS_DEBUG
+  fprintf (stderr, "Expanding path \"%s\"\n", path_value);
+  fprintf (stderr, " postfix = \"%s\"\n", col_pos + 1);
+#endif
+  /* path_value is a comma/space separated list of prefixes to try. strtok()
+     would be ideal here, but it's not reentrant and already used in
+     find_path_filename(). We go for strcspn()/strspn() */
+  do
+    {
+      prefix_size = strcspn (prefix, ", ");
+      new_dir_name = xmalloc (prefix_size + postfix_size + 1);
+      strncpy (new_dir_name, prefix, prefix_size);
+      strcpy (new_dir_name + prefix_size, col_pos + 1);
+      expand_pseudo_dir (dir_list_ptr, dir_count_ptr,
+			 new_dir_name, recursion_level + 1);
+      if ((*dir_list_ptr)[*dir_count_ptr-1] != special_dir_marker)
+	add_directory (dir_list_ptr, dir_count_ptr, special_dir_marker);
+
+      /* point to the delimiters */
+      prefix += prefix_size;
+      /* point beyond the delimiters */
+      prefix += prefix_size = strspn (prefix, ", ");
+    }
+  while (prefix_size > 0);	/* repeat is there was a comma or a space */
+  free (path_value);
+}
+
+/*
+ * These routines, while not strictly needed to be exported, are
+ * plausibly useful to be called by outsiders.
+ */
+
+/*
+ * UNIX: Replace a leading or trailing `:' in ENV_PATH with
+ * DEFAULT_PATH.  If neither is present, return ENV_PATH if that is
+ * non-null, else DEFAULT_PATH.
+ *
+ * RISC OS: Haven't found a way to _include_ the defaults yet
+ */
+
+string
+expand_default (env_path, default_path)
+     string env_path;
+     string default_path;
+{
+  string expansion;
+
+  if (env_path == NULL)
+    expansion = default_path;
+  else
+    expansion = env_path;
+
+  return expansion;
+}
+
+
+#if 0				/* maybe I'll implement this one day */
+/*
+ * Routines to save and retrieve a directory list keyed by the
+ * original colon-separated path.  This is useful because 1) it can
+ * take a significant amount of time to discover all the
+ * subdirectories of a given directory, and 2) many paths all have
+ * the same basic default, and thus would recompute the directory
+ * list.
+ */
+
+typedef struct
+{
+  string path;
+  string *dir_list;
+}
+saved_path_entry;
+
+static saved_path_entry *saved_paths = NULL;
+static unsigned saved_paths_length = 0;
+
+
+/*
+ * We implement the data structure as a simple linear list, since
+ * it's unlikely to ever be more than a dozen or so elements long. We
+ * don't bother to check here if PATH has already been saved; we
+ * always add it to our list.
+ */
+
+static void
+  save_dir_list
+P2C (string, path, string *, dir_list)
+{
+  saved_paths_length++;
+  XRETALLOC (saved_paths, saved_paths_length, saved_path_entry);
+  saved_paths[saved_paths_length - 1].path = path;
+  saved_paths[saved_paths_length - 1].dir_list = dir_list;
+}
+
+/* When we retrieve, just check the list in order.  */
+
+static string *
+  find_dir_list
+P1C (string, path)
+{
+  unsigned p;
+
+#ifdef RISCOS			/* somehow this function doesn't * work. But
+				   as FileCore caches most * things, a
+				   research is not that * slow */
+  return NULL;
+#else
+
+  for (p = 0; p < saved_paths_length; p++)
+    {
+      if (strcmp (saved_paths[p].path, path) == 0)
+	return saved_paths[p].dir_list;
+    }
+
+  return NULL;
+#endif
+}
+#endif

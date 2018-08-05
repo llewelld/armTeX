@@ -1,0 +1,26 @@
+|#!/bin/sh
+|# Make sure that files will be found in the current directory, so the
+|# trap test will run properly.
+|# 
+
+|# trap.mf.
+|MFINPUTS=.
+|export MFINPUTS
+
+|# trap.base.
+|MFBASES=.
+|export MFBASES
+
+|# mf.pool.
+|MFPOOL=.
+|export MFPOOL
+
+|# trap.72270gf
+|GFFONTS=.
+|export GFFONTS
+
+|RISC OS:
+set MFInputs$Path @.
+set MFBases$Path @.
+set MFPool$Path @.
+set GFFonts$Path @.

@@ -1,0 +1,105 @@
+/*
+ * riscos_ex.c: RISC OS extras
+ * 
+ * Copyright (C) 1992 Free Software Foundation, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * 
+ * This file contains functions that are lacking in Acorn ANSI C v4 or
+ * that are too RISC OS-specific to be simply changed in the relevant
+ * .c or .h files
+ * 
+ * All functions are prefixed by `riscos_' to avoid function name
+ * clashes
+ * 
+ * The author is Mark J. Sinke, reachable at marks@stack.urc.tue.nl or
+ * Mark J. Sinke Mendelssohnstraat 5 5144 GD WAALWIJK The Netherlands
+ */
+
+#ifndef RISCOS_EX_H
+#define RISCOS_EX_H
+
+/* riscos_absolute(name): return true if `name' has an absolute path */
+boolean riscos_absolute (char *name);
+
+/* riscossetname(name): set name of `current path' */
+void riscossetname (char *name);
+
+/* riscos_isdir(filename): return true if filename is a directory */
+boolean riscos_isdir (char *filename);
+
+/* riscos_samefile(file1, file2): return true if files are the same */
+boolean riscos_samefile (char *file1, char *file2);
+
+#ifndef RISCOS_EX_C_FILE	/* Avoid circular references */
+/*
+ * riscos_fopen(filename, mode): open a file for output, possibly
+ * creating a directory and dealing with '@'
+ */
+FILE *riscos_fopen (char *filename, char *mode);
+#define fopen(a,b) riscos_fopen(a,b)
+#endif /* RISC OS C File */
+
+/* All of these filetypes are registered */
+#define riscosdvitype   0xce4
+#define riscostextype   0xce5 /* was 0x2a7 */
+#define riscoslatextype 0xaca /* was 0x2a8 */
+#define riscosmftype    0xca0 /* was 0x2a9 */
+#define riscosgftype    0xca2 /* was 0x2aa */
+#define riscospktype    0xca3 /* was 0x2ab */
+#define riscostfmtype   0xca1 /* was 0x2ac */
+#define riscosvftype    0xac9
+#define riscosdumptype  0xffd /* data type for memory dumps */
+
+extern int riscostype;		/* file type for next file to be
+				 * opened for output */
+
+/* Extensions by Jakob Stoklund Olesen */
+
+extern char *current_prefix;	/* current path prefix */
+extern int current_prefix_length;	/* and its length */
+
+/*
+ * All the filename translation for RISC OS is handled by this function.
+ * The current prefix is prepended to the path is necessary and the
+ * extension delimiter is swapped between '.' and '/'. If create is true,
+ * an empty file of type riscostype is created and possibly the necessary
+ * directory. The string returned is malloc'ed and should be freed after use.
+ */
+
+extern char *riscos_translate (char *filename, boolean create);
+
+/*
+ * TeX and Metafont have two ways of creating output files with
+ * extensions: dot-mode: file is put in a directory. slash-mode:
+ * extension separator is '/'. The mode is determined by the filename
+ * conventions used by the input file.
+ * 
+ * The calling program should set riscosoutputmode to -1 if it is
+ * negative and the program is about to read the file that determines
+ * the output mode.
+ */
+extern enum riscosoutputmode_enum
+  {
+    outputmode_setnextread = -1,	/* Set mode from filename of next
+					 * sucessful openin */
+    outputmode_unset = -2,	/* The output mode has not yet been
+				 * determined */
+    outputmode_dot = 1,		/* use '.' filenames */
+    outputmode_slash = 2	/* use '/' names */
+  }
+riscosoutputmode;
+
+#endif /* RISCOS_EX_H */

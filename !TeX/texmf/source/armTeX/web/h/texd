@@ -1,0 +1,4 @@
+#undef	TRIP
+#undef	TRAP
+#define	STAT
+#undef	DEBUG

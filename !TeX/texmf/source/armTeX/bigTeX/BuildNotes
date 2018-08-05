@@ -1,0 +1,6 @@
+convert ^.lib
+gcc -mthrowback -DTeX -Ilib: -DINITEX -c c.initex
+gcc -mthrowback -DTeX -Ilib: -c c.openinout
+gcc -o biginitex o.iextra o.initex o.openinout o.tex0 o.tex1 ^.lib.library OSLib:o.OSLib
+gcc -o bigvirtex o.vextra o.itex o.openinout o.tex0 o.tex1 ^.lib.library OSLib:o.OSLib
+gcc -o patgen o.patgen2 ^.lib.library OSLib:o.OSLib

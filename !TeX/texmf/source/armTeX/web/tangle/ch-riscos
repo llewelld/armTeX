@@ -1,0 +1,68 @@
+Changes to tangle for RISC OS compilation
+These changes should be applied after the wec2c change file
+
+@x
+@ @<Set up null...@>=
+begin
+        chg_name[1]:='/';
+        chg_name[2]:='d';
+        chg_name[3]:='e';
+        chg_name[4]:='v';
+        chg_name[5]:='/';
+        chg_name[6]:='n';
+        chg_name[7]:='u';
+        chg_name[8]:='l';
+        chg_name[9]:='l';
+        chg_name[10]:=' ';
+end
+@y
+@ @<Set up null...@>=
+begin
+        chg_name[1]:='n';
+        chg_name[2]:='u';
+        chg_name[3]:='l';
+        chg_name[4]:='l';
+        chg_name[5]:=':';
+        chg_name[6]:=' ';
+end
+@z
+
+
+@x
+@ There are no flags currently used by \.{TANGLE}, but this module can be
+used as a hook to introduce flags.
+
+@<Handle flag...@>=
+begin
+  @<Print usage error message and quit@>;
+end
+
+@ @<Print usage error message and quit@>=
+begin
+  print_ln ('Usage: tangle webfile[.web] [changefile[.ch]].');
+  uexit (1);
+end
+@y
+@ We accept alternate names for the output files via \.{-o} and \.{-p}
+flags.
+
+@<Handle flag...@>=
+begin
+  if fname[2] = 'o' then begin
+    incr(a);
+    argv(a,pascal_file_name);
+  end
+  else if fname[2] = 'p' then begin
+    incr(a);
+    argv(a,pool_file_name);
+  end
+  else
+    @<Print usage error message and quit@>;
+end
+
+@ @<Print usage error message and quit@>=
+begin
+  print_ln ('Usage: tangle webfile[.web] [changefile[.ch]] [-o file] [-p poolfile]');
+  uexit (1);
+end
+@z

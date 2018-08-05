@@ -1,0 +1,16 @@
+{This file defines some RISC OS specific procedures and constants}
+@define procedure riscossettypenamed ();
+@define procedure riscossetname ();
+
+@define const riscosdvitype;
+@define const riscostextype;
+@define const riscostfmtype;
+@define const riscosgftype;
+@define const riscospktype;
+@define const riscosvftype;
+@define const riscosdumptype;
+
+@define var riscostype;
+
+{Jakob Stoklund Olesen 15. Mar 1998}
+@define var riscosoutputmode;

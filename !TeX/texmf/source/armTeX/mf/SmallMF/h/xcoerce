@@ -1,0 +1,612 @@
+void initialize();
+void println();
+void zprintchar();
+#define printchar(s) zprintchar((ASCIIcode) (s))
+void zprint();
+#define print(s) zprint((integer) (s))
+void zslowprint();
+#define slowprint(s) zslowprint((integer) (s))
+void zprintnl();
+#define printnl(s) zprintnl((strnumber) (s))
+void zprintthedigs();
+#define printthedigs(k) zprintthedigs((eightbits) (k))
+void zprintint();
+#define printint(n) zprintint((integer) (n))
+void zprintscaled();
+#define printscaled(s) zprintscaled((scaled) (s))
+void zprinttwo();
+#define printtwo(x, y) zprinttwo((scaled) (x), (scaled) (y))
+void zprinttype();
+#define printtype(t) zprinttype((smallnumber) (t))
+void begindiagnostic();
+void zenddiagnostic();
+#define enddiagnostic(blankline) zenddiagnostic((boolean) (blankline))
+void zprintdiagnostic();
+#define printdiagnostic(s, t, nuline) zprintdiagnostic((strnumber) (s), (strnumber) (t), (boolean) (nuline))
+void zprintfilename();
+#define printfilename(n, a, e) zprintfilename((integer) (n), (integer) (a), (integer) (e))
+void zflushstring();
+#define flushstring(s) zflushstring((strnumber) (s))
+void jumpout();
+void error();
+void zfatalerror();
+#define fatalerror(s) zfatalerror((strnumber) (s))
+void zoverflow();
+#define overflow(s, n) zoverflow((strnumber) (s), (integer) (n))
+void zconfusion();
+#define confusion(s) zconfusion((strnumber) (s))
+boolean initterminal();
+strnumber makestring();
+boolean zstreqbuf();
+#define streqbuf(s, k) zstreqbuf((strnumber) (s), (integer) (k))
+integer zstrvsstr();
+#define strvsstr(s, t) zstrvsstr((strnumber) (s), (strnumber) (t))
+boolean getstringsstarted();
+void zprintdd();
+#define printdd(n) zprintdd((integer) (n))
+void terminput();
+void normalizeselector();
+void pauseforinstructions();
+void zmissingerr();
+#define missingerr(s) zmissingerr((strnumber) (s))
+void cleararith();
+integer zslowadd();
+#define slowadd(x, y) zslowadd((integer) (x), (integer) (y))
+scaled zrounddecimals();
+#define rounddecimals(k) zrounddecimals((smallnumber) (k))
+fraction zmakefraction();
+#define makefraction(p, q) zmakefraction((integer) (p), (integer) (q))
+integer ztakefraction();
+#define takefraction(q, f) ztakefraction((integer) (q), (fraction) (f))
+integer ztakescaled();
+#define takescaled(q, f) ztakescaled((integer) (q), (scaled) (f))
+scaled zmakescaled();
+#define makescaled(p, q) zmakescaled((integer) (p), (integer) (q))
+fraction zvelocity();
+#define velocity(st, ct, sf, cf, t) zvelocity((fraction) (st), (fraction) (ct), (fraction) (sf), (fraction) (cf), (scaled) (t))
+integer zabvscd();
+#define abvscd(a, b, c, d) zabvscd((integer) (a), (integer) (b), (integer) (c), (integer) (d))
+scaled zfloorscaled();
+#define floorscaled(x) zfloorscaled((scaled) (x))
+integer zfloorunscaled();
+#define floorunscaled(x) zfloorunscaled((scaled) (x))
+integer zroundunscaled();
+#define roundunscaled(x) zroundunscaled((scaled) (x))
+scaled zroundfraction();
+#define roundfraction(x) zroundfraction((fraction) (x))
+scaled zsquarert();
+#define squarert(x) zsquarert((scaled) (x))
+integer zpythadd();
+#define pythadd(a, b) zpythadd((integer) (a), (integer) (b))
+integer zpythsub();
+#define pythsub(a, b) zpythsub((integer) (a), (integer) (b))
+scaled zmlog();
+#define mlog(x) zmlog((scaled) (x))
+scaled zmexp();
+#define mexp(x) zmexp((scaled) (x))
+angle znarg();
+#define narg(x, y) znarg((integer) (x), (integer) (y))
+void znsincos();
+#define nsincos(z) znsincos((angle) (z))
+void newrandoms();
+void zinitrandoms();
+#define initrandoms(seed) zinitrandoms((scaled) (seed))
+scaled zunifrand();
+#define unifrand(x) zunifrand((scaled) (x))
+scaled normrand();
+void zprintword();
+#define printword(w) zprintword((memoryword) (w))
+void zshowtokenlist();
+#define showtokenlist(p, q, l, nulltally) zshowtokenlist((integer) (p), (integer) (q), (integer) (l), (integer) (nulltally))
+void runaway();
+halfword getavail();
+halfword zgetnode();
+#define getnode(s) zgetnode((integer) (s))
+void zfreenode();
+#define freenode(p, s) zfreenode((halfword) (p), (halfword) (s))
+void sortavail();
+void zflushlist();
+#define flushlist(p) zflushlist((halfword) (p))
+void zflushnodelist();
+#define flushnodelist(p) zflushnodelist((halfword) (p))
+void zcheckmem();
+#define checkmem(printlocs) zcheckmem((boolean) (printlocs))
+void zsearchmem();
+#define searchmem(p) zsearchmem((halfword) (p))
+void zprintop();
+#define printop(c) zprintop((quarterword) (c))
+void fixdateandtime();
+halfword zidlookup();
+#define idlookup(j, l) zidlookup((integer) (j), (integer) (l))
+void zprimitive();
+#define primitive(s, c, o) zprimitive((strnumber) (s), (halfword) (c), (halfword) (o))
+halfword znewnumtok();
+#define newnumtok(v) znewnumtok((scaled) (v))
+void zflushtokenlist();
+#define flushtokenlist(p) zflushtokenlist((halfword) (p))
+void zdeletemacref();
+#define deletemacref(p) zdeletemacref((halfword) (p))
+void zprintcmdmod();
+#define printcmdmod(c, m) zprintcmdmod((integer) (c), (integer) (m))
+void zshowmacro();
+#define showmacro(p, q, l) zshowmacro((halfword) (p), (integer) (q), (integer) (l))
+void zinitbignode();
+#define initbignode(p) zinitbignode((halfword) (p))
+halfword idtransform();
+void znewroot();
+#define newroot(x) znewroot((halfword) (x))
+void zprintvariablename();
+#define printvariablename(p) zprintvariablename((halfword) (p))
+boolean zinteresting();
+#define interesting(p) zinteresting((halfword) (p))
+halfword znewstructure();
+#define newstructure(p) znewstructure((halfword) (p))
+halfword zfindvariable();
+#define findvariable(t) zfindvariable((halfword) (t))
+void zprintpath();
+#define printpath(h, s, nuline) zprintpath((halfword) (h), (strnumber) (s), (boolean) (nuline))
+void zprintweight();
+#define printweight(q, xoff) zprintweight((halfword) (q), (integer) (xoff))
+void zprintedges();
+#define printedges(s, nuline, xoff, yoff) zprintedges((strnumber) (s), (boolean) (nuline), (integer) (xoff), (integer) (yoff))
+void zunskew();
+#define unskew(x, y, octant) zunskew((scaled) (x), (scaled) (y), (smallnumber) (octant))
+void zprintpen();
+#define printpen(p, s, nuline) zprintpen((halfword) (p), (strnumber) (s), (boolean) (nuline))
+void zprintdependency();
+#define printdependency(p, t) zprintdependency((halfword) (p), (smallnumber) (t))
+void zprintdp();
+#define printdp(t, p, verbosity) zprintdp((smallnumber) (t), (halfword) (p), (smallnumber) (verbosity))
+halfword stashcurexp();
+void zunstashcurexp();
+#define unstashcurexp(p) zunstashcurexp((halfword) (p))
+void zprintexp();
+#define printexp(p, verbosity) zprintexp((halfword) (p), (smallnumber) (verbosity))
+void zdisperr();
+#define disperr(p, s) zdisperr((halfword) (p), (strnumber) (s))
+halfword zpplusfq();
+#define pplusfq(p, f, q, t, tt) zpplusfq((halfword) (p), (integer) (f), (halfword) (q), (smallnumber) (t), (smallnumber) (tt))
+halfword zpoverv();
+#define poverv(p, v, t0, t1) zpoverv((halfword) (p), (scaled) (v), (smallnumber) (t0), (smallnumber) (t1))
+void zvaltoobig();
+#define valtoobig(x) zvaltoobig((scaled) (x))
+void zmakeknown();
+#define makeknown(p, q) zmakeknown((halfword) (p), (halfword) (q))
+void fixdependencies();
+void ztossknotlist();
+#define tossknotlist(p) ztossknotlist((halfword) (p))
+void ztossedges();
+#define tossedges(h) ztossedges((halfword) (h))
+void ztosspen();
+#define tosspen(p) ztosspen((halfword) (p))
+void zringdelete();
+#define ringdelete(p) zringdelete((halfword) (p))
+void zrecyclevalue();
+#define recyclevalue(p) zrecyclevalue((halfword) (p))
+void zflushcurexp();
+#define flushcurexp(v) zflushcurexp((scaled) (v))
+void zflusherror();
+#define flusherror(v) zflusherror((scaled) (v))
+void putgeterror();
+void zputgetflusherror();
+#define putgetflusherror(v) zputgetflusherror((scaled) (v))
+void zflushbelowvariable();
+#define flushbelowvariable(p) zflushbelowvariable((halfword) (p))
+void zflushvariable();
+#define flushvariable(p, t, discardsuffixes) zflushvariable((halfword) (p), (halfword) (t), (boolean) (discardsuffixes))
+smallnumber zundtype();
+#define undtype(p) zundtype((halfword) (p))
+void zclearsymbol();
+#define clearsymbol(p, saving) zclearsymbol((halfword) (p), (boolean) (saving))
+void zsavevariable();
+#define savevariable(q) zsavevariable((halfword) (q))
+void zsaveinternal();
+#define saveinternal(q) zsaveinternal((halfword) (q))
+void unsave();
+halfword zcopyknot();
+#define copyknot(p) zcopyknot((halfword) (p))
+halfword zcopypath();
+#define copypath(p) zcopypath((halfword) (p))
+halfword zhtapypoc();
+#define htapypoc(p) zhtapypoc((halfword) (p))
+fraction zcurlratio();
+#define curlratio(gamma, atension, btension) zcurlratio((scaled) (gamma), (scaled) (atension), (scaled) (btension))
+void zsetcontrols();
+#define setcontrols(p, q, k) zsetcontrols((halfword) (p), (halfword) (q), (integer) (k))
+void zsolvechoices();
+#define solvechoices(p, q, n) zsolvechoices((halfword) (p), (halfword) (q), (halfword) (n))
+void zmakechoices();
+#define makechoices(knots) zmakechoices((halfword) (knots))
+void zmakemoves();
+#define makemoves(xx0, xx1, xx2, xx3, yy0, yy1, yy2, yy3, xicorr, etacorr) zmakemoves((scaled) (xx0), (scaled) (xx1), (scaled) (xx2), (scaled) (xx3), (scaled) (yy0), (scaled) (yy1), (scaled) (yy2), (scaled) (yy3), (smallnumber) (xicorr), (smallnumber) (etacorr))
+void zsmoothmoves();
+#define smoothmoves(b, t) zsmoothmoves((integer) (b), (integer) (t))
+void zinitedges();
+#define initedges(h) zinitedges((halfword) (h))
+void fixoffset();
+void zedgeprep();
+#define edgeprep(ml, mr, nl, nr) zedgeprep((integer) (ml), (integer) (mr), (integer) (nl), (integer) (nr))
+halfword zcopyedges();
+#define copyedges(h) zcopyedges((halfword) (h))
+void yreflectedges();
+void xreflectedges();
+void zyscaleedges();
+#define yscaleedges(s) zyscaleedges((integer) (s))
+void zxscaleedges();
+#define xscaleedges(s) zxscaleedges((integer) (s))
+void znegateedges();
+#define negateedges(h) znegateedges((halfword) (h))
+void zsortedges();
+#define sortedges(h) zsortedges((halfword) (h))
+void zculledges();
+#define culledges(wlo, whi, wout, win) zculledges((integer) (wlo), (integer) (whi), (integer) (wout), (integer) (win))
+void xyswapedges();
+void zmergeedges();
+#define mergeedges(h) zmergeedges((halfword) (h))
+integer ztotalweight();
+#define totalweight(h) ztotalweight((halfword) (h))
+void beginedgetracing();
+void traceacorner();
+void endedgetracing();
+void ztracenewedge();
+#define tracenewedge(r, n) ztracenewedge((halfword) (r), (integer) (n))
+void zlineedges();
+#define lineedges(x0, y0, x1, y1) zlineedges((scaled) (x0), (scaled) (y0), (scaled) (x1), (scaled) (y1))
+void zmovetoedges();
+#define movetoedges(m0, n0, m1, n1) zmovetoedges((integer) (m0), (integer) (n0), (integer) (m1), (integer) (n1))
+void zskew();
+#define skew(x, y, octant) zskew((scaled) (x), (scaled) (y), (smallnumber) (octant))
+void zabnegate();
+#define abnegate(x, y, octantbefore, octantafter) zabnegate((scaled) (x), (scaled) (y), (smallnumber) (octantbefore), (smallnumber) (octantafter))
+fraction zcrossingpoint();
+#define crossingpoint(a, b, c) zcrossingpoint((integer) (a), (integer) (b), (integer) (c))
+void zprintspec();
+#define printspec(s) zprintspec((strnumber) (s))
+void zprintstrange();
+#define printstrange(s) zprintstrange((strnumber) (s))
+void zremovecubic();
+#define removecubic(p) zremovecubic((halfword) (p))
+void zsplitcubic();
+#define splitcubic(p, t, xq, yq) zsplitcubic((halfword) (p), (fraction) (t), (scaled) (xq), (scaled) (yq))
+void quadrantsubdivide();
+void octantsubdivide();
+void makesafe();
+void zbeforeandafter();
+#define beforeandafter(b, a, p) zbeforeandafter((scaled) (b), (scaled) (a), (halfword) (p))
+scaled zgoodval();
+#define goodval(b, o) zgoodval((scaled) (b), (scaled) (o))
+scaled zcompromise();
+#define compromise(u, v) zcompromise((scaled) (u), (scaled) (v))
+void xyround();
+void diaground();
+void znewboundary();
+#define newboundary(p, octant) znewboundary((halfword) (p), (smallnumber) (octant))
+halfword zmakespec();
+#define makespec(h, safetymargin, tracing) zmakespec((halfword) (h), (scaled) (safetymargin), (integer) (tracing))
+void zendround();
+#define endround(x, y) zendround((scaled) (x), (scaled) (y))
+void zfillspec();
+#define fillspec(h) zfillspec((halfword) (h))
+void zdupoffset();
+#define dupoffset(w) zdupoffset((halfword) (w))
+halfword zmakepen();
+#define makepen(h) zmakepen((halfword) (h))
+halfword ztrivialknot();
+#define trivialknot(x, y) ztrivialknot((scaled) (x), (scaled) (y))
+halfword zmakepath();
+#define makepath(penhead) zmakepath((halfword) (penhead))
+void zfindoffset();
+#define findoffset(x, y, p) zfindoffset((scaled) (x), (scaled) (y), (halfword) (p))
+void zsplitforoffset();
+#define splitforoffset(p, t) zsplitforoffset((halfword) (p), (fraction) (t))
+void zfinoffsetprep();
+#define finoffsetprep(p, k, w, x0, x1, x2, y0, y1, y2, rising, n) zfinoffsetprep((halfword) (p), (halfword) (k), (halfword) (w), (integer) (x0), (integer) (x1), (integer) (x2), (integer) (y0), (integer) (y1), (integer) (y2), (boolean) (rising), (integer) (n))
+void zoffsetprep();
+#define offsetprep(c, h) zoffsetprep((halfword) (c), (halfword) (h))
+void zskewlineedges();
+#define skewlineedges(p, w, ww) zskewlineedges((halfword) (p), (halfword) (w), (halfword) (ww))
+void zdualmoves();
+#define dualmoves(h, p, q) zdualmoves((halfword) (h), (halfword) (p), (halfword) (q))
+void zfillenvelope();
+#define fillenvelope(spechead) zfillenvelope((halfword) (spechead))
+halfword zmakeellipse();
+#define makeellipse(majoraxis, minoraxis, theta) zmakeellipse((scaled) (majoraxis), (scaled) (minoraxis), (angle) (theta))
+scaled zfinddirectiontime();
+#define finddirectiontime(x, y, h) zfinddirectiontime((scaled) (x), (scaled) (y), (halfword) (h))
+void zcubicintersection();
+#define cubicintersection(p, pp) zcubicintersection((halfword) (p), (halfword) (pp))
+void zpathintersection();
+#define pathintersection(h, hh) zpathintersection((halfword) (h), (halfword) (hh))
+void zopenawindow();
+#define openawindow(k, r0, c0, r1, c1, x, y) zopenawindow((windownumber) (k), (scaled) (r0), (scaled) (c0), (scaled) (r1), (scaled) (c1), (scaled) (x), (scaled) (y))
+void zdispedges();
+#define dispedges(k) zdispedges((windownumber) (k))
+fraction zmaxcoef();
+#define maxcoef(p) zmaxcoef((halfword) (p))
+halfword zpplusq();
+#define pplusq(p, q, t) zpplusq((halfword) (p), (halfword) (q), (smallnumber) (t))
+halfword zptimesv();
+#define ptimesv(p, v, t0, t1, visscaled) zptimesv((halfword) (p), (integer) (v), (smallnumber) (t0), (smallnumber) (t1), (boolean) (visscaled))
+halfword zpwithxbecomingq();
+#define pwithxbecomingq(p, x, q, t) zpwithxbecomingq((halfword) (p), (halfword) (x), (halfword) (q), (smallnumber) (t))
+void znewdep();
+#define newdep(q, p) znewdep((halfword) (q), (halfword) (p))
+halfword zconstdependency();
+#define constdependency(v) zconstdependency((scaled) (v))
+halfword zsingledependency();
+#define singledependency(p) zsingledependency((halfword) (p))
+halfword zcopydeplist();
+#define copydeplist(p) zcopydeplist((halfword) (p))
+void zlineareq();
+#define lineareq(p, t) zlineareq((halfword) (p), (smallnumber) (t))
+halfword znewringentry();
+#define newringentry(p) znewringentry((halfword) (p))
+void znonlineareq();
+#define nonlineareq(v, p, flushp) znonlineareq((integer) (v), (halfword) (p), (boolean) (flushp))
+void zringmerge();
+#define ringmerge(p, q) zringmerge((halfword) (p), (halfword) (q))
+void zshowcmdmod();
+#define showcmdmod(c, m) zshowcmdmod((integer) (c), (integer) (m))
+void showcontext();
+void zbegintokenlist();
+#define begintokenlist(p, t) zbegintokenlist((halfword) (p), (quarterword) (t))
+void endtokenlist();
+void zencapsulate();
+#define encapsulate(p) zencapsulate((halfword) (p))
+void zinstall();
+#define install(r, q) zinstall((halfword) (r), (halfword) (q))
+void zmakeexpcopy();
+#define makeexpcopy(p) zmakeexpcopy((halfword) (p))
+halfword curtok();
+void backinput();
+void backerror();
+void inserror();
+void beginfilereading();
+void endfilereading();
+void clearforerrorprompt();
+boolean checkoutervalidity();
+void getnext();
+void firmuptheline();
+halfword zscantoks();
+#define scantoks(terminator, substlist, tailend, suffixcount) zscantoks((commandcode) (terminator), (halfword) (substlist), (halfword) (tailend), (smallnumber) (suffixcount))
+void getsymbol();
+void getclearsymbol();
+void checkequals();
+void makeopdef();
+void zcheckdelimiter();
+#define checkdelimiter(ldelim, rdelim) zcheckdelimiter((halfword) (ldelim), (halfword) (rdelim))
+halfword scandeclaredvariable();
+void scandef();
+void zprintmacroname();
+#define printmacroname(a, n) zprintmacroname((halfword) (a), (halfword) (n))
+void zprintarg();
+#define printarg(q, n, b) zprintarg((halfword) (q), (integer) (n), (halfword) (b))
+void zscantextarg();
+#define scantextarg(ldelim, rdelim) zscantextarg((halfword) (ldelim), (halfword) (rdelim))
+void zmacrocall();
+#define macrocall(defref, arglist, macroname) zmacrocall((halfword) (defref), (halfword) (arglist), (halfword) (macroname))
+void expand();
+void getxnext();
+void zstackargument();
+#define stackargument(p) zstackargument((halfword) (p))
+void passtext();
+void zchangeiflimit();
+#define changeiflimit(l, p) zchangeiflimit((smallnumber) (l), (halfword) (p))
+void checkcolon();
+void conditional();
+void zbadfor();
+#define badfor(s) zbadfor((strnumber) (s))
+void beginiteration();
+void resumeiteration();
+void stopiteration();
+void beginname();
+boolean zmorename();
+#define morename(c) zmorename((ASCIIcode) (c))
+void endname();
+void zpackfilename();
+#define packfilename(n, a, e) zpackfilename((strnumber) (n), (strnumber) (a), (strnumber) (e))
+void zpackbufferedname();
+#define packbufferedname(n, a, b) zpackbufferedname((smallnumber) (n), (integer) (a), (integer) (b))
+strnumber makenamestring();
+strnumber zamakenamestring();
+#define amakenamestring(f) zamakenamestring((alphafile *) &(f))
+strnumber zbmakenamestring();
+#define bmakenamestring(f) zbmakenamestring((bytefile *) &(f))
+strnumber zwmakenamestring();
+#define wmakenamestring(f) zwmakenamestring((wordfile *) &(f))
+void scanfilename();
+void zpackjobname();
+#define packjobname(s) zpackjobname((strnumber) (s))
+void zpromptfilename();
+#define promptfilename(s, e) zpromptfilename((strnumber) (s), (strnumber) (e))
+void openlogfile();
+void startinput();
+void zbadexp();
+#define badexp(s) zbadexp((strnumber) (s))
+void zstashin();
+#define stashin(p) zstashin((halfword) (p))
+void backexpr();
+void badsubscript();
+void zobliterated();
+#define obliterated(q) zobliterated((halfword) (q))
+void zbinarymac();
+#define binarymac(p, c, n) zbinarymac((halfword) (p), (halfword) (c), (halfword) (n))
+void materializepen();
+void knownpair();
+halfword newknot();
+smallnumber scandirection();
+void zdonullary();
+#define donullary(c) zdonullary((quarterword) (c))
+boolean znicepair();
+#define nicepair(p, t) znicepair((integer) (p), (quarterword) (t))
+void zprintknownorunknowntype();
+#define printknownorunknowntype(t, v) zprintknownorunknowntype((smallnumber) (t), (integer) (v))
+void zbadunary();
+#define badunary(c) zbadunary((quarterword) (c))
+void znegatedeplist();
+#define negatedeplist(p) znegatedeplist((halfword) (p))
+void pairtopath();
+void ztakepart();
+#define takepart(c) ztakepart((quarterword) (c))
+void zstrtonum();
+#define strtonum(c) zstrtonum((quarterword) (c))
+scaled pathlength();
+void ztestknown();
+#define testknown(c) ztestknown((quarterword) (c))
+void zdounary();
+#define dounary(c) zdounary((quarterword) (c))
+void zbadbinary();
+#define badbinary(p, c) zbadbinary((halfword) (p), (quarterword) (c))
+halfword ztarnished();
+#define tarnished(p) ztarnished((halfword) (p))
+void zdepfinish();
+#define depfinish(v, q, t) zdepfinish((halfword) (v), (halfword) (q), (smallnumber) (t))
+void zaddorsubtract();
+#define addorsubtract(p, q, c) zaddorsubtract((halfword) (p), (halfword) (q), (quarterword) (c))
+void zdepmult();
+#define depmult(p, v, visscaled) zdepmult((halfword) (p), (integer) (v), (boolean) (visscaled))
+void zhardtimes();
+#define hardtimes(p) zhardtimes((halfword) (p))
+void zdepdiv();
+#define depdiv(p, v) zdepdiv((halfword) (p), (scaled) (v))
+void zsetuptrans();
+#define setuptrans(c) zsetuptrans((quarterword) (c))
+void zsetupknowntrans();
+#define setupknowntrans(c) zsetupknowntrans((quarterword) (c))
+void ztrans();
+#define trans(p, q) ztrans((halfword) (p), (halfword) (q))
+void zpathtrans();
+#define pathtrans(p, c) zpathtrans((halfword) (p), (quarterword) (c))
+void zedgestrans();
+#define edgestrans(p, c) zedgestrans((halfword) (p), (quarterword) (c))
+void zbilin1();
+#define bilin1(p, t, q, u, delta) zbilin1((halfword) (p), (scaled) (t), (halfword) (q), (scaled) (u), (scaled) (delta))
+void zaddmultdep();
+#define addmultdep(p, v, r) zaddmultdep((halfword) (p), (scaled) (v), (halfword) (r))
+void zbilin2();
+#define bilin2(p, t, v, u, q) zbilin2((halfword) (p), (halfword) (t), (scaled) (v), (halfword) (u), (halfword) (q))
+void zbilin3();
+#define bilin3(p, t, v, u, delta) zbilin3((halfword) (p), (scaled) (t), (scaled) (v), (scaled) (u), (scaled) (delta))
+void zbigtrans();
+#define bigtrans(p, c) zbigtrans((halfword) (p), (quarterword) (c))
+void zcat();
+#define cat(p) zcat((halfword) (p))
+void zchopstring();
+#define chopstring(p) zchopstring((halfword) (p))
+void zchoppath();
+#define choppath(p) zchoppath((halfword) (p))
+void zpairvalue();
+#define pairvalue(x, y) zpairvalue((scaled) (x), (scaled) (y))
+void zsetupoffset();
+#define setupoffset(p) zsetupoffset((halfword) (p))
+void zsetupdirectiontime();
+#define setupdirectiontime(p) zsetupdirectiontime((halfword) (p))
+void zfindpoint();
+#define findpoint(v, c) zfindpoint((scaled) (v), (quarterword) (c))
+void zdobinary();
+#define dobinary(p, c) zdobinary((halfword) (p), (quarterword) (c))
+void zfracmult();
+#define fracmult(n, d) zfracmult((scaled) (n), (scaled) (d))
+void gfswap();
+void zgffour();
+#define gffour(x) zgffour((integer) (x))
+void zgftwo();
+#define gftwo(x) zgftwo((integer) (x))
+void zgfthree();
+#define gfthree(x) zgfthree((integer) (x))
+void zgfpaint();
+#define gfpaint(d) zgfpaint((integer) (d))
+void zgfstring();
+#define gfstring(s, t) zgfstring((strnumber) (s), (strnumber) (t))
+void zgfboc();
+#define gfboc(minm, maxm, minn, maxn) zgfboc((integer) (minm), (integer) (maxm), (integer) (minn), (integer) (maxn))
+void initgf();
+void zshipout();
+#define shipout(c) zshipout((eightbits) (c))
+void ztryeq();
+#define tryeq(l, r) ztryeq((halfword) (l), (halfword) (r))
+void zmakeeq();
+#define makeeq(lhs) zmakeeq((halfword) (lhs))
+void doequation();
+void doassignment();
+void dotypedeclaration();
+void dorandomseed();
+void doprotection();
+void defdelims();
+void dointerim();
+void dolet();
+void donewinternal();
+void doshow();
+void disptoken();
+void doshowtoken();
+void doshowstats();
+void zdispvar();
+#define dispvar(p) zdispvar((halfword) (p))
+void doshowvar();
+void doshowdependencies();
+void doshowwhatever();
+boolean scanwith();
+void zfindedgesvar();
+#define findedgesvar(t) zfindedgesvar((halfword) (t))
+void doaddto();
+scaled ztfmcheck();
+#define tfmcheck(m) ztfmcheck((smallnumber) (m))
+void doshipout();
+void dodisplay();
+boolean zgetpair();
+#define getpair(c) zgetpair((commandcode) (c))
+void doopenwindow();
+void docull();
+void domessage();
+eightbits getcode();
+void zsettag();
+#define settag(c, t, r) zsettag((halfword) (c), (smallnumber) (t), (halfword) (r))
+void dotfmcommand();
+void dospecial();
+void storebasefile();
+void dostatement();
+void maincontrol();
+halfword zsortin();
+#define sortin(v) zsortin((scaled) (v))
+integer zmincover();
+#define mincover(d) zmincover((scaled) (d))
+scaled zthresholdfn();
+#define thresholdfn(m) zthresholdfn((integer) (m))
+integer zskimp();
+#define skimp(m) zskimp((integer) (m))
+void ztfmwarning();
+#define tfmwarning(m) ztfmwarning((smallnumber) (m))
+void fixdesignsize();
+integer zdimenout();
+#define dimenout(x) zdimenout((scaled) (x))
+void fixchecksum();
+void ztfmqqqq();
+#define tfmqqqq(x) ztfmqqqq((fourquarters) (x))
+boolean openbasefile();
+boolean loadbasefile();
+void scanprimary();
+void scansuffix();
+void scansecondary();
+void scantertiary();
+void scanexpression();
+void getboolean();
+void printcapsule();
+void tokenrecycle();
+void closefilesandterminate();
+void finalcleanup();
+void initprim();
+void inittab();
+void debughelp();
+/* Some definitions that get appended to the `coerce.h' file that web2c
+   outputs.  */
+
+/* The C compiler ignores most unnecessary casts (i.e., casts of
+   something to its own type).  However, for structures, it doesn't.
+   Therefore, we have to redefine these macros so they don't cast
+   cast their argument (of type memoryword or fourquarters,
+   respectively).  */
+#undef	printword
+#define	printword(x)	zprintword (x)
+
+#undef	tfmqqqq
+#define tfmqqqq(x)	ztfmqqqq (x)

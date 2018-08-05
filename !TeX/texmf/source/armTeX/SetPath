@@ -1,0 +1,2 @@
+set texsrc$path <Obey$Dir>.
+addtopath Run$Path texsrc:bin.

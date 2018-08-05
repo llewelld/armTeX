@@ -1,0 +1,49 @@
+tangle @.gftodvi.web @.gftodvi.ch
+^.lib.convert gftodvi c.gftodvi
+gcc -mthrowback -Ilib: -c c.gftodvi
+gcc -o bin.gftodvi o.gftodvi ^.lib.library OSLib:o.OSLib
+
+tangle @.gftopk.web @.gftopk.ch
+^.lib.convert gftopk c.gftopk
+gcc -mthrowback -Ilib: -c c.gftopk
+gcc -o bin.gftopk o.gftopk ^.lib.library OSLib:o.OSLib
+
+tangle @.gftype.web @.gftype.ch
+^.lib.convert gftype c.gftype
+gcc -mthrowback -Ilib: -c c.gftype
+gcc -o bin.gftype o.gftype ^.lib.library OSLib:o.OSLib
+
+tangle @.mft.web @.mft.ch
+^.lib.convert mft c.mft
+gcc -mthrowback -Ilib: -c c.mft
+gcc -o bin.mft o.mft ^.lib.library OSLib:o.OSLib
+
+tangle @.pktogf.web @.pktogf.ch
+^.lib.convert pktogf c.pktogf
+gcc -mthrowback -Ilib: -c c.pktogf
+gcc -o bin.pktogf o.pktogf ^.lib.library OSLib:o.OSLib
+
+tangle @.pktype.web @.pktype.ch
+^.lib.convert pktype c.pktype
+gcc -mthrowback -Ilib: -c c.pktype
+gcc -o bin.pktype o.pktype ^.lib.library OSLib:o.OSLib
+
+tangle @.pltotf.web @.pltotf.ch
+^.lib.convert pltotf c.pltotf
+gcc -mthrowback -Ilib: -c c.pltotf
+gcc -o bin.pltotf o.pltotf ^.lib.library OSLib:o.OSLib
+
+tangle @.tftopl.web @.tftopl.ch
+^.lib.convert tftopl c.tftopl
+gcc -mthrowback -Ilib: -c c.tftopl
+gcc -o bin.tftopl o.tftopl ^.lib.library OSLib:o.OSLib
+
+tangle @.vftovp.web @.vftovp.ch
+^.lib.convert vftovp c.vftovp
+gcc -mthrowback -Ilib: -c c.vftovp
+gcc -o bin.vftovp o.vftovp ^.lib.library OSLib:o.OSLib
+
+tangle @.vptovf.web @.vptovf.ch
+^.lib.convert vptovf c.vptovf
+gcc -mthrowback -Ilib: -c c.vptovf
+gcc -o bin.vptovf o.vptovf ^.lib.library OSLib:o.OSLib

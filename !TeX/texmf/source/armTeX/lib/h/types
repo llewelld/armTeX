@@ -1,0 +1,28 @@
+/* types.h: general types.  */
+
+#ifndef TYPES_H
+#define TYPES_H
+
+/* Booleans.  */
+#ifndef RISCOS /* As enums are ints, this eats up huge amounts of memory */
+typedef enum { false = 0, true = 1 } boolean;
+#else /* RISC OS: smaller, and probably a bit slower */
+typedef unsigned char boolean;
+#define false (0) 
+#define true  (1)
+#endif
+
+/* The X11 library defines `FALSE' and `TRUE', and so we only want to
+   define them if necessary.  */
+#ifndef FALSE
+#define FALSE false
+#define TRUE true
+#endif /* FALSE */
+
+/* The usual null-terminated string.  */
+typedef char *string;
+
+/* A generic pointer in ANSI C.  */
+typedef void *address;
+
+#endif /* not TYPES_H */

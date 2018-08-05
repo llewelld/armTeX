@@ -1,0 +1,148 @@
+/*
+   NewTypes --- change old TeX filetypes to new.
+
+   Copyright 1998, Jakob Stoklund Olesen <stoklund@mi.aau.dk>
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "oslib/osfile.h"
+#include "oslib/osgbpb.h"
+
+#define MAXPATHLEN 1024
+
+static const char helptext[] =
+"Usage NewTypes <directory> ...\n\n"
+"Recursively changes Old TeX filetype to new, registered ones.\n"
+"These filetypes are changed:\n"
+"  Old  New  Name\n"
+"  2a7  ce5  TeX\n"
+"  2a8  aca  LaTeX\n"
+"  2a9  ca0  Metafont\n"
+"  2aa  ca2  GF (Generic Font)\n"
+"  2ab  ca3  PK (Packed font)\n"
+"  2ac  ca1  TFM (TeX Font Metrics)\n"
+"  2ad  ac9  VF (Virtual Font)\n";
+
+static void dodir (const char *dirname);
+
+int
+main (int argc, char *argv[])
+{
+  int arg;
+
+  if (argc < 2)
+    {
+      fputs (helptext, stderr);
+      return EXIT_FAILURE;
+    }
+
+  for (arg = 1; arg < argc; arg++)
+    dodir (argv[arg]);
+
+  return EXIT_SUCCESS;
+}
+
+/* max # entries in GBPB buffer */
+#define GBPB_ENTRIES 128
+
+static void
+dodir (const char *dirname)
+{
+  os_error *err;
+
+  char pathname[MAXPATHLEN];
+  int pathlen = 1 + strlen (dirname);
+
+  osgbpb_info_stamped dirbuf[GBPB_ENTRIES], *object;
+  int context, count;
+
+  /* We hope that leafnames are no longer than 55 chars */
+  if (pathlen >= MAXPATHLEN - 55)
+    {
+      fputs ("Path too long\n", stderr);
+      exit
+	(EXIT_FAILURE);
+    }
+  memcpy (pathname, dirname, pathlen - 1);
+  pathname[pathlen - 1] = '.';
+
+  context = 0;
+  do
+    {				/* read entris into dirbuf */
+      err = xosgbpb_dir_entries_info_stamped (dirname,
+					(osgbpb_info_stamped_list *) dirbuf,
+					      GBPB_ENTRIES,
+					      context, sizeof (dirbuf),
+					      "*", &count, &context);
+      if (err)
+	{
+	  fprintf (stderr, "Error &%x when reading dir '%s': %s\n",
+		   err->errnum, dirname, err->errmess);
+	  return;
+	}
+      /* count = #entries read, context==-1 => don't call again */
+
+      for (object = dirbuf; count > 0; count--,
+	   object = (osgbpb_info_stamped *) ((char *) (object + 1)
+					     + (strlen (object->name) & ~3)))
+	{
+	  switch (object->obj_type)
+	    {
+	      unsigned new_type;
+	      /* Directories and images: recurse */
+	    case 2:
+	    case 3:
+	      strcpy (pathname + pathlen, object->name);
+	      dodir (pathname);
+	      break;
+	      /* files: check type */
+	    case 1:
+	      switch (object->file_type)
+		{
+		case 0x2a7:
+		  new_type = 0xce5;
+		  break;
+		case 0x2a8:
+		  new_type = 0xaca;
+		  break;
+		case 0x2a9:
+		  new_type = 0xca0;
+		  break;
+		case 0x2aa:
+		  new_type = 0xca2;
+		  break;
+		case 0x2ab:
+		  new_type = 0xca3;
+		  break;
+		case 0x2ac:
+		  new_type = 0xca1;
+		  break;
+		case 0x2ad:
+		  new_type = 0xac9;
+		  break;
+		default:
+		  new_type = 0;
+		}
+	      if (new_type)
+		{
+		  strcpy (pathname + pathlen, object->name);
+		  err = xosfile_set_type (pathname, new_type);
+		  if (err)
+		    fprintf (stderr,
+			     "Error &%x when typing file '%s': %s\n",
+			     err->errnum, pathname, err->errmess);
+
+		}
+	      break;
+	    default:
+	      strcpy (pathname + pathlen, object->name);
+	      fprintf (stderr, "Unknown object type %d. (%s)\n",
+		       object->obj_type, pathname);
+	    }
+	}
+    }
+  while (context != -1);
+}

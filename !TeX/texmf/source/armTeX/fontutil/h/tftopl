@@ -1,0 +1,32 @@
+void initialize();
+void zoutdigs();
+#define outdigs(j) zoutdigs((integer) (j))
+void zprintdigs();
+#define printdigs(j) zprintdigs((integer) (j))
+void zprintoctal();
+#define printoctal(c) zprintoctal((byte) (c))
+void outln();
+void left();
+void right();
+void zoutBCPL();
+#define outBCPL(k) zoutBCPL((indexvar) (k))
+void zoutoctal();
+#define outoctal(k, l) zoutoctal((indexvar) (k), (indexvar) (l))
+void zoutchar();
+#define outchar(c) zoutchar((byte) (c))
+void zoutface();
+#define outface(k) zoutface((indexvar) (k))
+void zoutfix();
+#define outfix(k) zoutfix((indexvar) (k))
+void zcheckBCPL();
+#define checkBCPL(k, l) zcheckBCPL((indexvar) (k), (indexvar) (l))
+void hashinput();
+indexvar zffn();
+#define ffn(h, x, y) zffn((indexvar) (h), (indexvar) (x), (indexvar) (y))
+indexvar zeval();
+#define eval(x, y) zeval((indexvar) (x), (indexvar) (y))
+indexvar zffn();
+#define ffn(h, x, y) zffn((indexvar) (h), (indexvar) (x), (indexvar) (y))
+boolean organize();
+void dosimplethings();
+void docharacters();

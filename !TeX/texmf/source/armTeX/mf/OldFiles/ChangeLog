@@ -1,0 +1,59 @@
+Fri Feb 12 07:29:19 1993  Karl Berry  (karl@cs.umb.edu)
+
+	* Makefile.in (xincludedir): Include $(xincludedir).
+
+Sun Jan  3 13:30:10 1993  Karl Berry  (karl@cs.umb.edu)
+
+	* Makefile.in (distclean): Remove Makefile.
+
+Sat Dec 19 18:57:02 1992  Karl Berry  (karl@cs.umb.edu)
+
+	* Makefile.in ({sun,x11}.c): New targets.
+
+Sun Dec 13 14:27:15 1992  Karl Berry  (karl@cs.umb.edu)
+
+	* Makefile.in (c-sources): New target.
+
+Sat Dec 12 15:10:49 1992  Karl Berry  (karl@cs.umb.edu)
+
+	* Makefile.in: Rewrite from Makefile.
+
+Sun Oct 18 13:48:49 1992  Karl Berry  (karl@cs.umb.edu)
+
+	* tek.c (bcopy, bzero) [SYSV]: Remove these; they're already
+	defined in c-memstr.h.
+
+Sun Jul  5 07:29:40 1992  Karl Berry  (karl@hayley)
+
+        * sun-sunview.c: give return types to all fns.
+
+        * sun-sunview.c (mf_sun_initscreen): avoid line >= 80 chars.
+        * uniterm.c (mf_uniterm_paintrow): likewise.
+        * sun-xview.c (mf_xview_updatescreen): likewise.
+
+Fri Jul  3 11:22:47 1992  Karl Berry  (karl@hayley)
+
+        * Makefile (CFLAGS): define as -g.
+        (CPPFLAGS): new var.
+        (.c.o): use it.
+        (distclean): synonym for realclean.
+
+        * sun-sunview.c: changes from Pierre (like the following).
+        * sun-gfx.c: rename from sun-suntools.c.
+        * sun-xview.c: new file.
+        * sun.c: remove and remake as a link to sun-sunview.c.
+
+Fri Mar 20 16:53:52 1992  Karl Berry  (karl at hayley)
+
+        * Makefile (mostlyclean): new name for `clean'.
+        (clean): what `realclean' used to be.
+        (realclean): nothing to do anymore.
+        (install): install the program.
+
+Fri Jan 24 09:21:15 1992  Karl Berry  (karl at hayley)
+
+        * Makefile (cflags): don't include -I../config.
+
+Sun Jan 12 12:53:24 1992  Karl Berry  (karl at hayley)
+
+        * Makefile (CFLAGS): include config, two levels up.

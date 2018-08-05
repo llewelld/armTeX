@@ -1,0 +1,35 @@
+|#!/bin/sh
+|# Convert WEB programs not needing special treatment to C.
+|# 
+|# $1 is the Pascal file to be converted.
+|# $2 is the C file to be created.
+|# $3, if present, is extended with .h, and #included in the C file, and
+|# extended with .defines, and prepended along with the common
+|# definitions.
+
+|pascalfile=$1
+|basefile=`basename $1 .p`
+|cfile=$2
+|hfile=config.h
+|defnfile=
+
+|if test $# -eq 3
+|then
+|  hfile=$3.h
+|  defnfile=$3.defines
+|fi
+
+|cat ../lib/common.defines $defnfile $pascalfile \
+|       | ../web2c/web2c -h$hfile -c$basefile \
+|       | ../web2c/fixwrites $basefile > $cfile
+
+|RISC OS:
+echo Concatenating...
+fcat ^.lib.common_def ^.lib.riscos_def @.%0.p >temp
+echo web2c...
+web2c -hh.config -c%0 <temp >temp2
+echo fixwrites...
+fixwrites %0 <temp2 >%1
+remove temp
+remove temp2
+

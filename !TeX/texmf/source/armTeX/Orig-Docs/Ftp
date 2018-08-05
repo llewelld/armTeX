@@ -1,0 +1,161 @@
+[ ftp.nwc: 21 February 1993 
+
+  Most of the information in this file can be found in readme1.ftp
+  and readme2.ftp, dated 01/07/93, in pub/unixtex on 
+  byron.u.washington.edu (128.95.48.32).
+
+  Numerical Internet addresses are subject to change.  If your name
+  server does not recognize a hostname, and if you find that one of 
+  the Internet addresses listed below is no longer valid, please get 
+  in touch with us, and we shall look up the current numerical address 
+  for you. ]
+
+
+Most people who get in touch with us are aiming to install plain TeX,
+LaTeX, SliTeX, and plain Metafont, a previewer that will work in an X 
+environment, and a PostScript printer driver.  We hope you will not mind 
+if we limit ourselves to addressing only the simplest means by which 
+to attain these three aims via ftp.  
+
+Thanks to Karl Berry, who is the Unix System Coordination Chair for TUG, 
+and maintainer of WEB-to-C, and without whom TeX users with Unix machines 
+would be nowhere, retrieval can be done from the following three sites 
+(all of which have many useful things for TeX users other than what we 
+will be focussing on here).  The steps are:
+
+   ftp ftp.cs.umb.edu		(Internet address: 158.121.104.33)
+
+	ftp> cd pub/tex
+	ftp> get modes.mf	[place in whatever you will be defining 
+				 as your MFINPUTS directory in your
+				 ./web2c-<version>/lib/site.h file]
+	ftp> bi
+	ftp> get dvipsk.tar.Z	[PostScript printer driver source:
+				 unpacks into ./dvipsk-<version>]
+
+	ftp> get web.tar.Z	[WEB source for TeX, Metafont, & family:
+				 unpacks into ./web2c-<version>]
+
+	ftp> get web2c.tar.Z	[web2c source:
+				 unpacks into ./web2c-<version>]
+
+	ftp> get xdvik.tar.Z	[X-windows previewer source:
+				 unpacks into ./xdvik-<version>]
+	ftp> quit		[end ftp session]
+
+
+   ftp labrea.stanford.edu	(Internet address: 36.8.0.112)
+
+	ftp> cd tex/bibtex
+	ftp> prompt		[to avoid being asked about the retrieval
+				 of each file covered by a wildcard symbol]
+	ftp> mget *.bib		[place in your BIBINPUTS directory]
+	ftp> mget *.bst		[place in your TEXINPUTS directory]
+	ftp> mget *.sty		[place in your TEXINPUTS directory]
+	ftp> mget *.tex		[place in your TEXINPUTS directory]
+	ftp> cd ../cm
+	ftp> mget *.mf		[place in MFINPUTS directory]
+	ftp> cd ../lib		
+	ftp> mget *		[place *.mf files in MFINPUTS directory,
+				 *.mft and *.tex in TEXINPUTS directory]
+	ftp> cd ../fonts	
+	ftp> bi
+	ftp> mget *.tfm		[place in TEXFONTS directory]
+
+     For a basic set of 300 dpi Computer Modern fonts generated for a 
+     Canon CX engine (not absolutely necessary, for dvips will generate 
+     fonts as needed):
+
+	ftp> cd ../gf
+	ftp> mget *		[These are in gf format.  To convert
+				 them into pk format, use "gftopk" which, 
+				 along with its man page, will be made and 
+				 installed during the web2c make of TeX.]
+	ftp> quit		[end ftp session]
+
+
+   ftp niord.shsu.edu		(Internet address: 192.92.115.8)
+
+	ftp> cd latex		
+	ftp> bi
+	ftp> get LATEX-25MAR1992.TAR_Z
+
+		[Rename this to latex-25mar92.tar.Z, before
+		 extraction.
+
+		 This should unbundle into 4 directories.
+		 The general/*.tex and sty/*.sty files 
+		 should be placed in your TEXINPUTS directory;
+		 the fonts/*.mf files into MFINPUTS.]
+
+	ftp> quit	[end ftp session]
+
+
+We believe this covers the retrieval of the essential files.  
+Each of the three packages from ftp.cs.umb.edu contains its own 
+installation instructions.  Begin with ./web2c-<version>/README.
+
+If you are installing this material for the first time, you may not find 
+the process as easy as installing directly from our distribution tape, 
+but ease is a matter of degree.  All installation processes require
+careful attention to detail, and knowledge of your system.  
+Festina Lente (Make Haste Slowly), and you improve your chances 
+of success.  
+
+------------------------------------------------------------------------
+
+For other programs, input files, and fonts, the major TeX archives are:
+
+Domestic (USA) sites:
+
+	e-math.ams.com		130.44.1.100	[AMS-TeX, AMS-LaTeX]
+	niord.shsu.edu		192.92.115.8
+	science.utah.edu	128.110.198.2
+	ymir.claremont.edu	134.173.21.23	
+
+European sites:
+
+	archive.cs.ruu.nl	131.211.80.17
+	ftp.th-darmstadt.de	130.83.55.75
+	ftp.uni-stuttgart.de	129.69.1.12
+	tex.aston.ac.uk		134.151.40.18
+
+------------------------------------------------------------------------
+
+Network users interested in TeX software will find much that is useful in 
+the following FAQ (Frequently Asked Questions) documents on ftp.uu.net 
+(137.39.1.9) in ~/usenet/comp.text.tex:
+
+	T,_L,_e.:_F_A_Q_w_A_M	[TeX,LaTeX,etc.:FAQ with Answers(Monthly)]
+	TeX-FAQ-supplement_*
+
+A beautifully done index of macros for TeX and LaTeX is available on 
+theory.lcs.mit.edu (18.52.0.92) in ~/pub/tex/TeX-index.
+
+------------------------------------------------------------------------
+
+If you are concerned about connect-time, search or retrieval problems, 
+or will require help in building and installing the basic TeX/LaTeX 
+and Metafont programs on your machines, you may wish to consider ordering 
+a distribution tape from
+
+	Northwest Computing Support Center
+	DR-10, Thomson Hall 35
+	University of Washington
+	Seattle WA  98195
+
+	phone: (206) 543-6259
+
+A distribution fee in the area of $210 for domestic sites covers the 
+expenses of putting together and maintaining the distribution, its 
+equipment, and installation-support services.  
+
+E-mail queries concerning the distribution tape should be sent to: 
+
+   elisabet@u.washington.edu   (Elizabeth Tachikawa), 
+
+otherwise to:  
+
+   mackay@cs.washington.edu    (Dr. Pierre A. MacKay).
+
+Until we can do more, we hope that this will help.

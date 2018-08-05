@@ -1,0 +1,10 @@
+gcc -Ilib: -DINIMF -DINI -mthrowback -DSMALLMF -c c.iextra
+gcc -Ilib: -DINIMF -mthrowback -DSMALLMF -c c.inimf
+gcc -mthrowback -DSMALLMF -Ilib: -c c.imf
+gcc -mthrowback -DSMALLMF -Ilib: -c c.vextra
+gcc -mthrowback -DSMALLMF -Ilib: -c c.openinout
+gcc -mthrowback -DSMALLMF -Ilib: -c c.mf0
+gcc -mthrowback -DSMALLMF -Ilib: -c c.mf1
+gcc -mthrowback -DSMALLMF -Ilib: -c c.mf2
+gcc -o inimf o.iextra o.inimf o.openinout o.mf0 o.mf1 o.mf2 ^.^.lib.library OSLib:o.OSLib
+gcc -o virmf o.vextra o.imf o.openinout o.mf0 o.mf1 o.mf2 ^.^.lib.library OSLib:o.OSLib

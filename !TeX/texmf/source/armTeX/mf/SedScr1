@@ -1,0 +1,9 @@
+        : again
+        /\.$/{
+                N
+                s/\.\n/\
+./
+                t again
+        }
+        s/\.hh\([^f]\|$\)/.hhfield\1/g
+        s/\.lh\([^f]\|$\)/.lhfield\1/g
